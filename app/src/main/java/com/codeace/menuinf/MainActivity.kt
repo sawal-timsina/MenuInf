@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment, data: Data, pos: Int) {
-        if (pos == 0) {
+        if (pos == -1) {
             foodAdapter.addData(data)
         } else {
             foodAdapter.updateData(data, pos)

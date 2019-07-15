@@ -10,8 +10,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 
 class FoodDialog : DialogFragment() {
-    lateinit var data: Data
-    var pos: Int = 0
+    private var data: Data = Data(R.drawable.ic_launcher_background, "", "", "", 0.0)
+    private var pos: Int = -1
     private lateinit var listener: FoodDialogListener
 
     interface FoodDialogListener {
@@ -37,10 +37,12 @@ class FoodDialog : DialogFragment() {
         val editItemCategory = dialogView.findViewById<EditText>(R.id.editItemCategory)
         val editItemSpiciness = dialogView.findViewById<EditText>(R.id.editItemSpiciness)
         val editItemPrice = dialogView.findViewById<EditText>(R.id.editItemPrice)
-        editItemName.text = Editable.Factory.getInstance().newEditable(data.name)
-        editItemCategory.text = Editable.Factory.getInstance().newEditable(data.category)
-        editItemSpiciness.text = Editable.Factory.getInstance().newEditable(data.spiciness)
-        editItemPrice.text = Editable.Factory.getInstance().newEditable(data.price.toString())
+        if (pos != -1) {
+            editItemName.text = Editable.Factory.getInstance().newEditable(data.name)
+            editItemCategory.text = Editable.Factory.getInstance().newEditable(data.category)
+            editItemSpiciness.text = Editable.Factory.getInstance().newEditable(data.spiciness)
+            editItemPrice.text = Editable.Factory.getInstance().newEditable(data.price.toString())
+        }
 
         builder.setView(dialogView)
         builder.setPositiveButton(R.string.ok) { _, _ ->
