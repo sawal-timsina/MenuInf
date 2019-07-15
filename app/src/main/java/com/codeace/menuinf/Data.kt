@@ -1,3 +1,5 @@
 package com.codeace.menuinf
 
-data class Data(var image: Int, var name: String, var category: String, var spiciness: String, var price: Double)
+import android.net.Uri
+
+data class Data(var image: Uri, var name: String, var category: String, var spiciness: String, var price: Double)

@@ -76,7 +76,7 @@ class Adapter(
             deleteListener: (Int) -> Unit,
             updateListener: (Int) -> Unit
         ) {
-            itemView.iFoodImage.setImageResource(data.image)
+            itemView.iFoodImage.setImageURI(data.image)
             itemView.iFoodName.text = data.name
             itemView.iFoodPrice.text = data.price.toString().plus(" Rs")
             itemView.optionButton.setOnClickListener {

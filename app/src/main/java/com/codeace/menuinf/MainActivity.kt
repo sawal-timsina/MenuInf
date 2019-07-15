@@ -3,8 +3,10 @@ package com.codeace.menuinf
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.transition.Explode
 import android.view.Menu
 import android.view.MenuItem
+import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.DialogFragment
@@ -12,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
+
     private var foodAdapter = Adapter({ pos: Int -> onItemClicked(pos) },
         { pos: Int -> onDeleteClicked(pos) },
         { pos: Int -> onUpdateClicked(pos) })
@@ -40,9 +43,9 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
-//        window.enterTransition = Explode()
-//        window.exitTransition = Explode()
+        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
+        window.enterTransition = Explode()
+        window.exitTransition = Explode()
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         foodAdapter.setFoodArray(Adapter.foodArray_)
