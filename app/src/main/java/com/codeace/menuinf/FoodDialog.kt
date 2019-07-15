@@ -57,7 +57,7 @@ class FoodDialog : DialogFragment() {
         dialogView.findViewById<Button>(R.id.imageButton).setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = "image/*"
-            startActivityForResult(intent, PERMISSION_CODE)
+            startActivityForResult(intent, IMAGE_PICK_CODE)
         }
 
         builder.setView(dialogView)
@@ -76,7 +76,7 @@ class FoodDialog : DialogFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
         super.onActivityResult(requestCode, resultCode, data)
-        println("got Image : ".plus(requestCode).plus(Activity.RESULT_OK).plus(IMAGE_PICK_CODE))
+        println("got Image : ".plus(requestCode).plus(" : " + Activity.RESULT_OK).plus(" : $IMAGE_PICK_CODE"))
 
         if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
             foodImage.setImageURI(data.data)
