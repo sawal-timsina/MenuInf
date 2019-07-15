@@ -7,10 +7,11 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
 
     private var foodAdapter = Adapter({ pos: Int -> onItemClicked(pos) },
         { pos: Int -> onDeleteClicked(pos) },
@@ -23,46 +24,18 @@ class MainActivity : AppCompatActivity() {
     private fun onUpdateClicked(pos: Int) {
         val dialog = FoodDialog()
         dialog.show(supportFragmentManager, "FoodDialog")
-//        foodAdapter.notifyItemChanged(pos)
-        /*val dialog = Dialog(ctx)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(false)
-        dialog.setContentView(R.layout.dialog_layout)
-        dialog.editItemName.setText(name)
-        dialog.editItemCategory.setText(category)
-        dialog.editItemSpiciness.setText(spiciness)
-        dialog.editItemPrice.setText(price.toString())
-        val buttonOk = dialog.findViewById<Button>(R.id.dialogYes)
-        val buttonCancel = dialog.findViewById<Button>(R.id.dialogNo)
-        buttonOk.setOnClickListener {
-            when {
-                dialog.editItemName.length() == 0 -> dialog.editItemName.error = "Field empty!"
-                dialog.editItemCategory.length() == 0 -> dialog.editItemCategory.error = "Field empty!"
-                dialog.editItemSpiciness.length() == 0 -> dialog.editItemSpiciness.error = "Field empty!"
-                dialog.editItemPrice.length() == 0 -> dialog.editItemPrice.error = "Field empty!"
-                else -> {
-                    if (pos >= 0) { recyclerListItem.removeAt(pos) }
-                    quickInsertion(
-                        recyclerListItem, Data(
-                            R.drawable.ic_launcher_background,
-                            dialog.editItemName.text.toString(),
-                            dialog.editItemCategory.text.toString(),
-                            dialog.editItemSpiciness.text.toString(),
-                            dialog.editItemPrice.text.toString().toDouble()
-                        )
-                    ).also { recyclerAdapter.notifyDataSetChanged() }
-                    dialog.dismiss()
-                }
-            }
-        }
-        buttonCancel.setOnClickListener {
-            dialog.dismiss()
-        }
-        dialog.show()*/
+        dialog.dataToUpdate(
+            foodAdapter.getData(pos).name, foodAdapter.getData(pos).category,
+            foodAdapter.getData(pos).spiciness, foodAdapter.getData(pos).price
+        )
     }
 
     private fun onItemClicked(pos: Int) {
         startActivity(Intent(this@MainActivity, ItemDetails::class.java))
+    }
+
+    override fun onDialogPositiveClick(dialog: DialogFragment) {
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
