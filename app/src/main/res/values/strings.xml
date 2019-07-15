@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Menu Inf</string>
+    <string name="transition_string">card_transition</string>
+    <string name="action_search">Search</string>
+    <string name="update">Update</string>
+    <string name="delete">Delete</string>
+    <string name="item_name">Item Name</string>
+    <string name="food_name">Food Name</string>
+    <string name="category">Category</string>
+    <string name="spiciness">Spiciness</string>
+    <string name="price">Price</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">Ok</string>
+    <string name="add_food_items">Add Food Items</string>
+</resources>
