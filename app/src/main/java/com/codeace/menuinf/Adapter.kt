@@ -7,6 +7,8 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_layout.view.*
 
+// Adapter Class
+
 class Adapter(
     private val clickListener: (Data) -> Unit,
     private val deleteListener: (Int) -> Unit,
