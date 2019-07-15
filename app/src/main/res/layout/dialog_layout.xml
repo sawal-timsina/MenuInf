@@ -3,7 +3,9 @@
                                                    xmlns:app="http://schemas.android.com/apk/res-auto"
                                                    android:layout_width="match_parent"
                                                    android:layout_height="wrap_content"
-                                                   android:padding="16dp">
+                                                   android:paddingStart="16dp"
+                                                   android:paddingTop="16dp"
+                                                   android:paddingEnd="16dp">
 
     <TextView
             android:id="@+id/dialogTitle"
@@ -29,7 +31,7 @@
             android:id="@+id/editItemName"
             android:layout_width="wrap_content"
             android:layout_height="52dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:ems="10"
             android:hint="@string/item_name"
@@ -50,9 +52,9 @@
 
     <EditText
             android:id="@+id/editItemCategory"
-            android:layout_width="wrap_content"
+            android:layout_width="211dp"
             android:layout_height="52dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:ems="10"
             android:hint="@string/category"
@@ -75,7 +77,7 @@
             android:id="@+id/editItemSpiciness"
             android:layout_width="wrap_content"
             android:layout_height="52dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:ems="10"
             android:hint="@string/spiciness"
@@ -98,7 +100,7 @@
             android:id="@+id/editItemPrice"
             android:layout_width="wrap_content"
             android:layout_height="52dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:ems="10"
             android:hint="@string/price"

@@ -28,17 +28,11 @@ class Adapter(
         return foodArray!!
     }
 
-    fun removeData(position: Int) {
-        foodArray_.removeAt(position)
-        notifyItemRemoved(position)
-    }
-
     fun getData(position: Int): Data {
         return foodArray!![position]
     }
 
-    fun addData(image: Int, name: String, category: String, spiciness: String, price: Double) {
-        val data = Data(image, name, category, spiciness, price)
+    fun addData(data: Data) {
         var i = itemCount
         do {
             i--
@@ -51,6 +45,16 @@ class Adapter(
             }
         } while (data.name < foodArray_[i].name)
         notifyItemInserted(i + 1)
+    }
+
+    fun removeData(position: Int) {
+        foodArray!!.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
+    fun updateData(data: Data, position: Int) {
+        foodArray!![position] = data
+        notifyItemChanged(position)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

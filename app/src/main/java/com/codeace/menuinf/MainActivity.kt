@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
-
     private var foodAdapter = Adapter({ pos: Int -> onItemClicked(pos) },
         { pos: Int -> onDeleteClicked(pos) },
         { pos: Int -> onUpdateClicked(pos) })
@@ -23,19 +22,20 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
 
     private fun onUpdateClicked(pos: Int) {
         val dialog = FoodDialog()
-        dialog.show(supportFragmentManager, "FoodDialog")
-        dialog.dataToUpdate(
-            foodAdapter.getData(pos).name, foodAdapter.getData(pos).category,
-            foodAdapter.getData(pos).spiciness, foodAdapter.getData(pos).price
-        )
+        dialog.show(supportFragmentManager, "FoodDialogUpdate")
+        dialog.dataToUpdate(foodAdapter.getData(pos), pos)
     }
 
     private fun onItemClicked(pos: Int) {
         startActivity(Intent(this@MainActivity, ItemDetails::class.java))
     }
 
-    override fun onDialogPositiveClick(dialog: DialogFragment) {
-
+    override fun onDialogPositiveClick(dialog: DialogFragment, data: Data, pos: Int) {
+        if (pos == 0) {
+            foodAdapter.addData(data)
+        } else {
+            foodAdapter.updateData(data, pos)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,8 +50,8 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
         itemRecyclerView.adapter = foodAdapter
 
         floatingActionButton.setOnClickListener {
-            foodAdapter.addData(R.drawable.ic_launcher_background, "hello ".plus((0..3).random()), "adfa", "sad", 0.0)
-            //Utils.foodDialog(this,"","","",0.0,-1)
+            val dialog = FoodDialog()
+            dialog.show(supportFragmentManager, "FoodDialogAdd")
         }
     }
 

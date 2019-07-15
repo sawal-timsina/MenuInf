@@ -3,20 +3,20 @@ package com.codeace.menuinf
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.view.LayoutInflater
+import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 
 class FoodDialog : DialogFragment() {
+    lateinit var data: Data
+    var pos: Int = 0
     private lateinit var listener: FoodDialogListener
 
     interface FoodDialogListener {
-        fun onDialogPositiveClick(dialog: DialogFragment)
+        fun onDialogPositiveClick(dialog: DialogFragment, data: Data, pos: Int)
     }
-
-    private lateinit var itemName: String
-    private lateinit var itemCategory: String
-    private lateinit var itemSpiciness: String
-    private lateinit var itemPrice: String
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -25,34 +25,39 @@ class FoodDialog : DialogFragment() {
         } catch (e: ClassCastException) {
             throw ClassCastException(
                 (context.toString() +
-                        " must implement FoodDialogListener")
+                        " must implement NoticeDialogListener")
             )
         }
     }
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        println("Created Dialog")
-        return activity?.let {
 
-            val builder = AlertDialog.Builder(it)
-            // Get the layout inflater
-            val inflater = requireActivity().layoutInflater
-            // Inflate and set the layout for the dialog
-            // Pass null as the parent view because its going in the dialog layout
-            builder.setView(inflater.inflate(R.layout.dialog_layout, null))
-                .setPositiveButton(R.string.ok) { _, _ ->
-                    listener.onDialogPositiveClick(this)
-                }
-                .setNegativeButton(R.string.cancel) { dialog, _ ->
-                    dialog.cancel()
-                }
-            builder.create()
-        } ?: throw IllegalStateException("Activity cannot be null")
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val builder = AlertDialog.Builder(activity!!)
+        val dialogView = LayoutInflater.from(activity!!).inflate(R.layout.dialog_layout, null)
+        val editItemName = dialogView.findViewById<EditText>(R.id.editItemName)
+        val editItemCategory = dialogView.findViewById<EditText>(R.id.editItemCategory)
+        val editItemSpiciness = dialogView.findViewById<EditText>(R.id.editItemSpiciness)
+        val editItemPrice = dialogView.findViewById<EditText>(R.id.editItemPrice)
+        editItemName.text = Editable.Factory.getInstance().newEditable(data.name)
+        editItemCategory.text = Editable.Factory.getInstance().newEditable(data.category)
+        editItemSpiciness.text = Editable.Factory.getInstance().newEditable(data.spiciness)
+        editItemPrice.text = Editable.Factory.getInstance().newEditable(data.price.toString())
+
+        builder.setView(dialogView)
+        builder.setPositiveButton(R.string.ok) { _, _ ->
+            data.name = editItemName.text.toString()
+            data.category = editItemCategory.text.toString()
+            data.spiciness = editItemSpiciness.text.toString()
+            data.price = editItemPrice.text.toString().toDouble()
+            listener.onDialogPositiveClick(this, data, pos)
+        }
+        builder.setNegativeButton(R.string.cancel) { dialog, _ ->
+            dialog.dismiss()
+        }
+        return builder.create()
     }
 
-    fun dataToUpdate(name: String, category: String, spiciness: String, price: Double) {
-        itemName = name
-        itemCategory = category
-        itemSpiciness = spiciness
-        itemPrice = price.toString()
+    fun dataToUpdate(data: Data, pos: Int) {
+        this.data = data
+        this.pos = pos
     }
 }
