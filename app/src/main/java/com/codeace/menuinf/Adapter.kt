@@ -7,12 +7,10 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_layout.view.*
 
-// Adapter Class
-
 class Adapter(
-    private val clickListener: (Data) -> Unit,
+    private val clickListener: (Int) -> Unit,
     private val deleteListener: (Int) -> Unit,
-    private val updateListener: (Data) -> Unit
+    private val updateListener: (Int) -> Unit
 ) : RecyclerView.Adapter<Adapter.ViewHolder>() {
 
     companion object {
@@ -33,6 +31,10 @@ class Adapter(
     fun removeData(position: Int) {
         foodArray_.removeAt(position)
         notifyItemRemoved(position)
+    }
+
+    fun getData(position: Int): Data {
+        return foodArray!![position]
     }
 
     fun addData(image: Int, name: String, category: String, spiciness: String, price: Double) {
@@ -66,9 +68,9 @@ class Adapter(
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindItems(
             data: Data,
-            clickListener: (Data) -> Unit,
+            clickListener: (Int) -> Unit,
             deleteListener: (Int) -> Unit,
-            updateListener: (Data) -> Unit
+            updateListener: (Int) -> Unit
         ) {
             itemView.iFoodImage.setImageResource(data.image)
             itemView.iFoodName.text = data.name
@@ -82,14 +84,14 @@ class Adapter(
                             deleteListener(adapterPosition)
                         }
                         R.id.action_update -> {
-                            updateListener(data)
+                            updateListener(adapterPosition)
                         }
                     }
                     true
                 }
                 popupMenu.show()
             }
-            itemView.setOnClickListener { clickListener(data) }
+            itemView.setOnClickListener { clickListener(adapterPosition) }
         }
     }
 }

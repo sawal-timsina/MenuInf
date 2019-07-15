@@ -12,15 +12,18 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    private var foodAdapter = Adapter({ data: Data -> onItemClicked(data) },
+    private var foodAdapter = Adapter({ pos: Int -> onItemClicked(pos) },
         { pos: Int -> onDeleteClicked(pos) },
-        { data: Data -> onUpdateClicked(data) })
+        { pos: Int -> onUpdateClicked(pos) })
 
     private fun onDeleteClicked(pos: Int) {
         foodAdapter.removeData(pos)
     }
 
-    private fun onUpdateClicked(data: Data) {
+    private fun onUpdateClicked(pos: Int) {
+        val dialog = FoodDialog()
+        dialog.show(supportFragmentManager, "FoodDialog")
+//        foodAdapter.notifyItemChanged(pos)
         /*val dialog = Dialog(ctx)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
@@ -58,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         dialog.show()*/
     }
 
-    private fun onItemClicked(data: Data) {
+    private fun onItemClicked(pos: Int) {
         startActivity(Intent(this@MainActivity, ItemDetails::class.java))
     }
 
