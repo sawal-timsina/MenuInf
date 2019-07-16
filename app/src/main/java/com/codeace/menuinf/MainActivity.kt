@@ -8,11 +8,14 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.*
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener, LifecycleOwner {
+class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
 
 
     private lateinit var foodViewModel: FoodViewModel
@@ -36,7 +39,8 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener, Lifecyc
         }).get(FoodViewModel::class.java)
 
 
-        foodViewModel.allFoodData.observe(this,
+        foodViewModel.allFoodData.observe(
+            this,
             Observer<MutableList<FoodData>> { foodArray ->
                 foodAdapter.setFoodArray(foodArray)
             })

@@ -1,6 +1,6 @@
 package com.codeace.menuinf
 
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -10,7 +10,7 @@ import androidx.room.Query
 interface FoodDataDao {
 
     @get:Query("SELECT * from food_items ORDER BY food_name ASC")
-    val allFoodData: LiveData<MutableList<FoodData>>
+    val allFoodData: MutableLiveData<MutableList<FoodData>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(foodData: FoodData)

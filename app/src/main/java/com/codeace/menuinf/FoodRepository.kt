@@ -2,12 +2,12 @@ package com.codeace.menuinf
 
 import android.app.Application
 import android.os.AsyncTask
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 
 class FoodRepository internal constructor(application: Application) {
 
     private val foodDataDao: FoodDataDao
-    internal val allFoodData: LiveData<MutableList<FoodData>>
+    internal val allFoodData: MutableLiveData<MutableList<FoodData>>
 
     init {
         val db = FoodDatabase.getDatabase(application)
