@@ -3,32 +3,43 @@ package com.codeace.menuinf
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.transition.Explode
 import android.view.Menu
 import android.view.MenuItem
-import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
+class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener, LifecycleOwner {
 
+
+    private lateinit var foodViewModel: FoodViewModel
     private var foodAdapter = Adapter({ pos: Int -> onItemClicked(pos) },
         { pos: Int -> onDeleteClicked(pos) },
         { pos: Int -> onUpdateClicked(pos) })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
-        window.enterTransition = Explode()
-        window.exitTransition = Explode()
+
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-        foodAdapter.setFoodArray(Adapter.foodArray_)
+
         itemRecyclerView.layoutManager = LinearLayoutManager(this)
         itemRecyclerView.adapter = foodAdapter
+
+        foodViewModel = ViewModelProviders.of(this, object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return FoodViewModel(application) as T
+            }
+        }).get(FoodViewModel::class.java)
+
+
+        foodViewModel.allFoodData.observe(this,
+            Observer<MutableList<FoodData>> { foodArray ->
+                foodAdapter.setFoodArray(foodArray)
+            })
 
         floatingActionButton.setOnClickListener {
             val dialog = FoodDialog()
@@ -45,7 +56,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
             }
 
             override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                foodAdapter.setFoodArray(Adapter.foodArray_)
+
                 return true
             }
         })
@@ -56,11 +67,10 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
             @SuppressLint("DefaultLocale")
             override fun onQueryTextChange(newText: String): Boolean {
                 if (newText.isNotEmpty()) {
-                    val listItems =
-                        Adapter.foodArray_.filter { s -> s.name.toLowerCase().contains(newText.toLowerCase()) }
-                    foodAdapter.setFoodArray((listItems as ArrayList<FoodData>))
+//                    val listItems = Adapter.foodArray_.filter { s -> s.name.toLowerCase().contains(newText.toLowerCase()) }
+//                    foodAdapter.setFoodArray((listItems as ArrayList<FoodData>))
                 } else {
-                    foodAdapter.setFoodArray(Adapter.foodArray_)
+//                    foodAdapter.setFoodArray(Adapter.foodArray_)
                 }
                 return true
             }
@@ -88,7 +98,8 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
 
     override fun onDialogPositiveClick(dialog: DialogFragment, foodData: FoodData, pos: Int) {
         if (pos == -1) {
-            foodAdapter.addData(foodData)
+            foodViewModel.insert(foodData)
+//            foodAdapter.addData(foodData)
         } else {
             foodAdapter.updateData(foodData, pos)
         }

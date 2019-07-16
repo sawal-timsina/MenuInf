@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.view.LayoutInflater
@@ -16,7 +15,7 @@ import com.bumptech.glide.Glide
 
 class FoodDialog : DialogFragment() {
     private val IMAGE_PICK_CODE = 1000
-    private var foodData: FoodData = FoodData(0, Uri.EMPTY, "", "", "", 0.0)
+    private var foodData: FoodData = FoodData(0, "", "", "", "", 0.0)
     private var pos: Int = -1
     private lateinit var listener: FoodDialogListener
     private lateinit var foodImage: ImageView
@@ -78,7 +77,7 @@ class FoodDialog : DialogFragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
             foodImage.setImageURI(data.data)
-            this.foodData.image = data.data!!
+            this.foodData.image = data.data.toString()
         }
     }
 

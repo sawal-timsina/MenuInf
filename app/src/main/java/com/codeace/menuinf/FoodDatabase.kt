@@ -19,10 +19,8 @@ abstract class FoodDatabase : RoomDatabase() {
             if (INSTANCE == null) {
                 synchronized(FoodDatabase::class.java) {
                     if (INSTANCE == null) {
-                        INSTANCE = Room.databaseBuilder(
-                            context.applicationContext,
-                            FoodDatabase::class.java, "food_database"
-                        )
+                        INSTANCE =
+                            Room.databaseBuilder(context.applicationContext, FoodDatabase::class.java, "food_database")
                             .build()
                     }
                 }

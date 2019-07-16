@@ -14,14 +14,14 @@ class Adapter(
     private val updateListener: (Int) -> Unit
 ) : RecyclerView.Adapter<Adapter.ViewHolder>() {
 
-    private var foodArray: ArrayList<FoodData>? = null
+    private var foodArray: MutableList<FoodData>? = null
 
-    fun setFoodArray(arrayList: ArrayList<FoodData>) {
+    fun setFoodArray(arrayList: MutableList<FoodData>) {
         foodArray = arrayList
         notifyDataSetChanged()
     }
 
-    fun getFoodArray(): ArrayList<FoodData> {
+    fun getFoodArray(): List<FoodData> {
         return foodArray!!
     }
 
@@ -29,20 +29,6 @@ class Adapter(
         return foodArray!![position]
     }
 
-    fun addData(foodData: FoodData) {
-        var i = itemCount
-        do {
-            i--
-            if (i < 0) {
-                foodArray!!.add(0, foodData)
-                break
-            } else if (foodData.name >= foodArray!![i].name) {
-                foodArray!!.add(i + 1, foodData)
-                break
-            }
-        } while (foodData.name < foodArray!![i].name)
-        notifyItemInserted(i + 1)
-    }
 
     fun removeData(position: Int) {
         foodArray!!.removeAt(position)

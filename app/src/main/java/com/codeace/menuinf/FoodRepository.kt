@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData
 class FoodRepository internal constructor(application: Application) {
 
     private val foodDataDao: FoodDataDao
-    internal val allFoodData: LiveData<ArrayList<FoodData>>
+    internal val allFoodData: LiveData<MutableList<FoodData>>
 
     init {
         val db = FoodDatabase.getDatabase(application)

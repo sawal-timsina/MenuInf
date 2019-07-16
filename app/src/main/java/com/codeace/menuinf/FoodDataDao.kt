@@ -10,7 +10,7 @@ import androidx.room.Query
 interface FoodDataDao {
 
     @get:Query("SELECT * from food_items ORDER BY food_name ASC")
-    val allFoodData: LiveData<ArrayList<FoodData>>
+    val allFoodData: LiveData<MutableList<FoodData>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(foodData: FoodData)
