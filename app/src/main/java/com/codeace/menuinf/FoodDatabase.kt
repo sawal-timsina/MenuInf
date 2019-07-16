@@ -21,7 +21,7 @@ abstract class FoodDatabase : RoomDatabase() {
                     if (INSTANCE == null) {
                         INSTANCE = Room.databaseBuilder(
                             context.applicationContext,
-                            FoodDatabase::class.java, "word_database"
+                            FoodDatabase::class.java, "food_database"
                         )
                             .build()
                     }
