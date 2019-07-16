@@ -11,20 +11,21 @@
             android:layout_height="200dp"
             android:contentDescription="@string/app_name"
             android:scaleType="centerCrop"
+            android:src="@drawable/imageplaceholder"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
-    <Button
-            android:id="@+id/imageButton"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/ic_camera_black_24dp"
+    <TextView
+            android:id="@+id/select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/select_image"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@+id/foodImage"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="@+id/foodImage"/>
+            app:layout_constraintEnd_toEndOf="@+id/foodImage" app:layout_constraintStart_toStartOf="@+id/foodImage"/>
 
     <TextView
             android:id="@+id/itemName"

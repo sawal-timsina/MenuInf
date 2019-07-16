@@ -19,28 +19,6 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
         { pos: Int -> onDeleteClicked(pos) },
         { pos: Int -> onUpdateClicked(pos) })
 
-    private fun onDeleteClicked(pos: Int) {
-        foodAdapter.removeData(pos)
-    }
-
-    private fun onUpdateClicked(pos: Int) {
-        val dialog = FoodDialog()
-        dialog.show(supportFragmentManager, "FoodDialogUpdate")
-        dialog.dataToUpdate(foodAdapter.getData(pos), pos)
-    }
-
-    private fun onItemClicked(pos: Int) {
-        startActivity(Intent(this@MainActivity, ItemDetails::class.java))
-    }
-
-    override fun onDialogPositiveClick(dialog: DialogFragment, data: Data, pos: Int) {
-        if (pos == -1) {
-            foodAdapter.addData(data)
-        } else {
-            foodAdapter.updateData(data, pos)
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
@@ -80,7 +58,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
                 if (newText.isNotEmpty()) {
                     val listItems =
                         Adapter.foodArray_.filter { s -> s.name.toLowerCase().contains(newText.toLowerCase()) }
-                    foodAdapter.setFoodArray((listItems as ArrayList<Data>))
+                    foodAdapter.setFoodArray((listItems as ArrayList<FoodData>))
                 } else {
                     foodAdapter.setFoodArray(Adapter.foodArray_)
                 }
@@ -94,4 +72,25 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
         return true
     }
 
+    private fun onDeleteClicked(pos: Int) {
+        foodAdapter.removeData(pos)
+    }
+
+    private fun onUpdateClicked(pos: Int) {
+        val dialog = FoodDialog()
+        dialog.show(supportFragmentManager, "FoodDialogUpdate")
+        dialog.dataToUpdate(foodAdapter.getData(pos), pos)
+    }
+
+    private fun onItemClicked(pos: Int) {
+        startActivity(Intent(this@MainActivity, ItemDetails::class.java))
+    }
+
+    override fun onDialogPositiveClick(dialog: DialogFragment, foodData: FoodData, pos: Int) {
+        if (pos == -1) {
+            foodAdapter.addData(foodData)
+        } else {
+            foodAdapter.updateData(foodData, pos)
+        }
+    }
 }
