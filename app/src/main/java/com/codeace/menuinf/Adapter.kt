@@ -14,10 +14,6 @@ class Adapter(
     private val updateListener: (Int) -> Unit
 ) : RecyclerView.Adapter<Adapter.ViewHolder>() {
 
-    companion object {
-        val foodArray_ = ArrayList<FoodData>()
-    }
-
     private var foodArray: ArrayList<FoodData>? = null
 
     fun setFoodArray(arrayList: ArrayList<FoodData>) {

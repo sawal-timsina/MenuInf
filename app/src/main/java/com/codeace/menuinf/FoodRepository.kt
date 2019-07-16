@@ -4,15 +4,15 @@ import android.app.Application
 import android.os.AsyncTask
 import androidx.lifecycle.LiveData
 
-class FoodReprository internal constructor(application: Application) {
+class FoodRepository internal constructor(application: Application) {
 
     private val foodDataDao: FoodDataDao
-    internal val allWords: LiveData<ArrayList<FoodData>>
+    internal val allFoodData: LiveData<ArrayList<FoodData>>
 
     init {
         val db = FoodDatabase.getDatabase(application)
         foodDataDao = db!!.foodDataDao()
-        allWords = foodDataDao.allFoodData
+        allFoodData = foodDataDao.allFoodData
     }
 
 
