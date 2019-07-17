@@ -15,7 +15,7 @@ import com.bumptech.glide.Glide
 
 class FoodDialog : DialogFragment() {
     private val IMAGE_PICK_CODE = 1000
-    private var foodData: FoodData = FoodData(0, "", "", "", "", 0.0)
+    private lateinit var foodData: FoodData
     private var pos: Int = -1
     private lateinit var listener: FoodDialogListener
     private lateinit var foodImage: ImageView
@@ -51,6 +51,8 @@ class FoodDialog : DialogFragment() {
             editItemCategory.text = Editable.Factory.getInstance().newEditable(foodData.category)
             editItemSpiciness.text = Editable.Factory.getInstance().newEditable(foodData.spiciness)
             editItemPrice.text = Editable.Factory.getInstance().newEditable(foodData.price.toString())
+        } else {
+            foodData = FoodData(null, "", "", "", "", 0.0)
         }
 
         dialogView.findViewById<ImageView>(R.id.foodImage).setOnClickListener {
@@ -73,14 +75,13 @@ class FoodDialog : DialogFragment() {
         return builder.create()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
-        super.onActivityResult(requestCode, resultCode, data)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
-            foodImage.setImageURI(data.data)
-            this.foodData.image = data.data.toString()
+            foodImage.setImageURI(data?.data)
+            this.foodData.image = data?.data.toString()
         }
+        super.onActivityResult(requestCode, resultCode, data)
     }
-
 
     fun dataToUpdate(foodData: FoodData, pos: Int) {
         this.foodData = foodData

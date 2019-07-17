@@ -2,12 +2,12 @@ package com.codeace.menuinf
 
 import android.app.Application
 import android.os.AsyncTask
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
 
 class FoodRepository internal constructor(application: Application) {
 
     private val foodDataDao: FoodDataDao
-    internal val allFoodData: MutableLiveData<MutableList<FoodData>>
+    internal val allFoodData: LiveData<List<FoodData>>
 
     init {
         val db = FoodDatabase.getDatabase(application)
@@ -20,11 +20,23 @@ class FoodRepository internal constructor(application: Application) {
         InsertAsyncTask(foodDataDao).execute(foodData)
     }
 
+    fun update(foodData: FoodData) {
+        InsertAsyncTask(foodDataDao).execute(foodData)
+    }
+
+    fun deleteAll() {
+        InsertAsyncTask(foodDataDao).execute(null)
+    }
+
     private class InsertAsyncTask internal constructor(private val mAsyncTaskDao: FoodDataDao) :
         AsyncTask<FoodData, Void, Void>() {
 
         override fun doInBackground(vararg params: FoodData): Void? {
-            mAsyncTaskDao.insert(params[0])
+            if (params[0] == null) {
+                mAsyncTaskDao.deleteAll()
+            } else {
+                mAsyncTaskDao.insert(params[0])
+            }
             return null
         }
     }

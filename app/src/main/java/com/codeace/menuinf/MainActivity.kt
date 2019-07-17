@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
@@ -38,16 +37,20 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
             }
         }).get(FoodViewModel::class.java)
 
-
         foodViewModel.allFoodData.observe(
             this,
-            Observer<MutableList<FoodData>> { foodArray ->
-                foodAdapter.setFoodArray(foodArray)
+            Observer { foodArray ->
+                foodAdapter.setFoodArray(foodArray as MutableList<FoodData>)
             })
 
         floatingActionButton.setOnClickListener {
             val dialog = FoodDialog()
             dialog.show(supportFragmentManager, "FoodDialogAdd")
+        }
+
+        floatingActionButton.setOnLongClickListener {
+            foodViewModel.deleteAll()
+            true
         }
     }
 
@@ -92,8 +95,8 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
 
     private fun onUpdateClicked(pos: Int) {
         val dialog = FoodDialog()
-        dialog.show(supportFragmentManager, "FoodDialogUpdate")
         dialog.dataToUpdate(foodAdapter.getData(pos), pos)
+        dialog.show(supportFragmentManager, "FoodDialogUpdate")
     }
 
     private fun onItemClicked(pos: Int) {
@@ -103,9 +106,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
     override fun onDialogPositiveClick(dialog: DialogFragment, foodData: FoodData, pos: Int) {
         if (pos == -1) {
             foodViewModel.insert(foodData)
-//            foodAdapter.addData(foodData)
         } else {
-            foodAdapter.updateData(foodData, pos)
         }
     }
 }
