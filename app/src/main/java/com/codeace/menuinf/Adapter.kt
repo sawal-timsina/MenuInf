@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.util.Pair
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -16,12 +17,14 @@ class Adapter(
     private val updateListener: (Int) -> Unit
 ) : ListAdapter<FoodData, Adapter.ViewHolder>(DIFF_CALLBACK) {
 
+
     fun getDataAt(position: Int): FoodData {
         return getItem(position)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_layout, parent, false))
+        val inflater = LayoutInflater.from(parent.context).inflate(R.layout.item_layout, parent, false)
+        return ViewHolder(inflater)
     }
 
 
@@ -36,6 +39,7 @@ class Adapter(
             deleteListener: (Int) -> Unit,
             updateListener: (Int) -> Unit
         ) {
+            imageView = Pair.create(itemView.iFoodImage, "FoodImage")
             Glide.with(itemView).load(foodData.image).centerCrop()
                 .placeholder(R.drawable.imageplaceholder).into(itemView.iFoodImage)
             itemView.iFoodName.text = foodData.name
@@ -56,11 +60,15 @@ class Adapter(
                 }
                 popupMenu.show()
             }
-            itemView.setOnClickListener { clickListener(adapterPosition) }
+            itemView.setOnClickListener {
+                clickListener(adapterPosition)
+            }
         }
     }
 
     companion object {
+        var imageView: Pair<View, String>? = null
+
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<FoodData>() {
             override fun areItemsTheSame(oldItem: FoodData, newItem: FoodData): Boolean {
                 return oldItem.id === newItem.id

@@ -2,8 +2,10 @@ package com.codeace.menuinf
 
 import android.content.Intent
 import android.os.Bundle
+import android.transition.Explode
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -22,6 +24,8 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.enterTransition = Explode()
+        window.exitTransition = Explode()
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
@@ -100,7 +104,8 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
     }
 
     private fun onItemClicked(pos: Int) {
-        startActivity(Intent(this@MainActivity, ItemDetails::class.java))
+        val option = ActivityOptionsCompat.makeSceneTransitionAnimation(this, Adapter.imageView)
+        startActivity(Intent(this, ItemDetails::class.java), option.toBundle())
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment, foodData: FoodData) {
