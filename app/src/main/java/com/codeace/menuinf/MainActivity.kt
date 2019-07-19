@@ -4,8 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.transition.Explode
 import android.view.Menu
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -13,12 +15,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.Serializable
 
 class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
 
 
     private lateinit var foodViewModel: FoodViewModel
-    private var foodAdapter = Adapter({ pos: Int -> onItemClicked(pos) },
+    private var foodAdapter = Adapter(
+        { pos: Int, image: Pair<View, String> -> onItemClicked(pos, image) },
         { pos: Int -> onDeleteClicked(pos) },
         { pos: Int -> onUpdateClicked(pos) })
 
@@ -103,9 +107,11 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
         dialog.show(supportFragmentManager, foodViewModel.allFoodData.value!![pos].id.toString())
     }
 
-    private fun onItemClicked(pos: Int) {
-        val option = ActivityOptionsCompat.makeSceneTransitionAnimation(this, Adapter.imageView)
-        startActivity(Intent(this, ItemDetails::class.java), option.toBundle())
+    private fun onItemClicked(pos: Int, image: Pair<View, String>) {
+        val intent = Intent(this, ItemDetails::class.java)
+        val option = ActivityOptionsCompat.makeSceneTransitionAnimation(this, image)
+        intent.putExtra("extra_object", foodAdapter.getDataAt(pos) as Serializable)
+        startActivity(intent, option.toBundle())
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment, foodData: FoodData) {

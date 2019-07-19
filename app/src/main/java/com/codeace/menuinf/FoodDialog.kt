@@ -11,7 +11,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import com.bumptech.glide.Glide
+import com.codeace.menuinf.Adapter.Companion.setImage
 
 class FoodDialog : DialogFragment() {
     private val imagePickCode = 1000
@@ -43,16 +43,16 @@ class FoodDialog : DialogFragment() {
         val builder = AlertDialog.Builder(activity!!)
         val dialogView = LayoutInflater.from(activity!!).inflate(R.layout.dialog_layout, null)
         foodImage = dialogView.findViewById(R.id.foodImage)
-        val editItemName = dialogView.findViewById<EditText>(R.id.editItemName)
-        val editItemCategory = dialogView.findViewById<EditText>(R.id.editItemCategory)
-        val editItemSpiciness = dialogView.findViewById<EditText>(R.id.editItemSpiciness)
-        val editItemPrice = dialogView.findViewById<EditText>(R.id.editItemPrice)
+        val editItemName = dialogView.findViewById<EditText>(R.id.itemName_)
+        val editItemCategory = dialogView.findViewById<EditText>(R.id.itemCategory_)
+        val editItemSpiciness = dialogView.findViewById<EditText>(R.id.itemSpiciness_)
+        val editItemPrice = dialogView.findViewById<EditText>(R.id.itemPrice_)
         if (tag.equals(getString(R.string.fda))) {
             foodData = FoodData(null, "", "", "", "", 0.0)
         } else {
             if (foodData == null) foodData = FoodData(tag!!.toInt(), "", "", "", "", 0.0)
             if (foodData != null) {
-                setImage()
+                setImage(activity!!, foodData!!.image, foodImage)
                 editItemName.text = getEditableText(foodData!!.name)
                 editItemCategory.text = getEditableText(foodData!!.category)
                 editItemSpiciness.text = getEditableText(foodData!!.spiciness)
@@ -84,13 +84,8 @@ class FoodDialog : DialogFragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == imagePickCode) {
             foodData!!.image = data?.data.toString()
-            setImage()
+            setImage(activity!!, foodData!!.image, foodImage)
         }
-    }
-
-    private fun setImage() {
-        Glide.with(this).load(foodData!!.image).centerCrop()
-            .placeholder(R.drawable.imageplaceholder).into(foodImage)
     }
 
     private fun getEditableText(text: String): Editable {

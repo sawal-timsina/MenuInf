@@ -39,7 +39,7 @@
             app:layout_constraintTop_toBottomOf="@+id/foodImage"/>
 
     <EditText
-            android:id="@+id/editItemName"
+            android:id="@+id/itemName_"
             android:layout_width="wrap_content"
             android:layout_height="52dp"
             android:layout_marginStart="16dp"
@@ -60,10 +60,10 @@
             android:layout_marginTop="24dp"
             android:text="@string/category"
             android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/editItemName"/>
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/itemName_"/>
 
     <EditText
-            android:id="@+id/editItemCategory"
+            android:id="@+id/itemCategory_"
             android:layout_width="211dp"
             android:layout_height="52dp"
             android:layout_marginStart="16dp"
@@ -73,7 +73,7 @@
             android:hint="@string/category"
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/itemName" app:layout_constraintTop_toBottomOf="@+id/editItemName"/>
+            app:layout_constraintStart_toEndOf="@+id/itemName" app:layout_constraintTop_toBottomOf="@+id/itemName_"/>
 
     <TextView
             android:id="@+id/itemSpiciness"
@@ -83,10 +83,10 @@
             android:layout_marginTop="24dp"
             android:text="@string/spiciness"
             android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/editItemCategory"/>
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/itemCategory_"/>
 
     <EditText
-            android:id="@+id/editItemSpiciness"
+            android:id="@+id/itemSpiciness_"
             android:layout_width="wrap_content"
             android:layout_height="52dp"
             android:layout_marginStart="16dp"
@@ -97,7 +97,7 @@
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/itemName"
-            app:layout_constraintTop_toBottomOf="@+id/editItemCategory"/>
+            app:layout_constraintTop_toBottomOf="@+id/itemCategory_"/>
 
     <TextView
             android:id="@+id/itemPrice"
@@ -107,10 +107,10 @@
             android:layout_marginTop="24dp"
             android:text="@string/price"
             android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/editItemSpiciness"/>
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/itemSpiciness_"/>
 
     <EditText
-            android:id="@+id/editItemPrice"
+            android:id="@+id/itemPrice_"
             android:layout_width="wrap_content"
             android:layout_height="52dp"
             android:layout_marginStart="16dp"
@@ -121,5 +121,5 @@
             android:inputType="numberDecimal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/itemName"
-            app:layout_constraintTop_toBottomOf="@+id/editItemSpiciness"/>
+            app:layout_constraintTop_toBottomOf="@+id/itemSpiciness_"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

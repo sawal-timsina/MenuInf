@@ -3,6 +3,8 @@ package com.codeace.menuinf
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
+
 
 @Entity(tableName = "food_items")
 data class FoodData(
@@ -12,4 +14,4 @@ data class FoodData(
     @ColumnInfo(name = "food_category") var category: String,
     @ColumnInfo(name = "food_spiciness") var spiciness: String,
     @ColumnInfo(name = "food_price") var price: Double
-)
+) : Serializable

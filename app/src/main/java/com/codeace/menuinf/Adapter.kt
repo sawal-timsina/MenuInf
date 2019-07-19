@@ -1,8 +1,10 @@
 package com.codeace.menuinf
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.util.Pair
 import androidx.recyclerview.widget.DiffUtil
@@ -13,10 +15,9 @@ import kotlinx.android.synthetic.main.item_layout.view.*
 
 
 class Adapter(
-    private val clickListener: (Int) -> Unit, private val deleteListener: (Int) -> Unit,
+    private val clickListener: (Int, Pair<View, String>) -> Unit, private val deleteListener: (Int) -> Unit,
     private val updateListener: (Int) -> Unit
 ) : ListAdapter<FoodData, Adapter.ViewHolder>(DIFF_CALLBACK) {
-
 
     fun getDataAt(position: Int): FoodData {
         return getItem(position)
@@ -35,13 +36,11 @@ class Adapter(
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindItems(
             foodData: FoodData,
-            clickListener: (Int) -> Unit,
+            clickListener: (Int, Pair<View, String>) -> Unit,
             deleteListener: (Int) -> Unit,
             updateListener: (Int) -> Unit
         ) {
-            imageView = Pair.create(itemView.iFoodImage, "FoodImage")
-            Glide.with(itemView).load(foodData.image).centerCrop()
-                .placeholder(R.drawable.imageplaceholder).into(itemView.iFoodImage)
+            setImage(itemView.context, foodData.image, itemView.iFoodImage)
             itemView.iFoodName.text = foodData.name
             itemView.iFoodPrice.text = foodData.price.toString().plus(" Rs")
             itemView.optionButton.setOnClickListener {
@@ -61,13 +60,17 @@ class Adapter(
                 popupMenu.show()
             }
             itemView.setOnClickListener {
-                clickListener(adapterPosition)
+                clickListener(adapterPosition, Pair.create(itemView.iFoodImage, "FoodImage"))
             }
         }
     }
 
     companion object {
-        var imageView: Pair<View, String>? = null
+
+        fun setImage(context: Context, url: String, imageView: ImageView) {
+            Glide.with(context).load(url).centerCrop()
+                .placeholder(R.drawable.imageplaceholder).into(imageView)
+        }
 
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<FoodData>() {
             override fun areItemsTheSame(oldItem: FoodData, newItem: FoodData): Boolean {
