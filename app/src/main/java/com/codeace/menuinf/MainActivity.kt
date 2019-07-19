@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
     }
 
     private fun onDeleteClicked(pos: Int) {
-        foodAdapter.notifyItemRemoved(pos)
+        foodViewModel.delete(foodViewModel.allFoodData.value!![pos])
     }
 
     private fun onUpdateClicked(pos: Int) {
