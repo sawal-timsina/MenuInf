@@ -23,6 +23,7 @@
                 android:contentDescription="@string/app_name"
                 android:drawingCacheQuality="auto"
                 android:scaleType="centerCrop"
+                android:transitionName="FoodImage"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
