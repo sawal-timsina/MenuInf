@@ -15,27 +15,42 @@ class FoodRepository internal constructor(application: Application) {
         allFoodData = foodDataDao.allFoodData
     }
 
-
     fun insert(foodData: FoodData) {
-        InsertAsyncTask(foodDataDao).execute(foodData)
+        DatabaseAsyncTask(foodDataDao, 1).execute(foodData)
     }
 
     fun update(foodData: FoodData) {
-        InsertAsyncTask(foodDataDao).execute(foodData)
+        DatabaseAsyncTask(foodDataDao, 2).execute(foodData)
+    }
+
+    fun delete(foodData: FoodData) {
+        DatabaseAsyncTask(foodDataDao, 3).execute(foodData)
     }
 
     fun deleteAll() {
-        InsertAsyncTask(foodDataDao).execute(null)
+        DatabaseAsyncTask(foodDataDao, 4).execute()
     }
 
-    private class InsertAsyncTask internal constructor(private val mAsyncTaskDao: FoodDataDao) :
+    private class DatabaseAsyncTask internal constructor(
+        private val mAsyncTaskDao: FoodDataDao,
+        private val type: Int
+    ) :
         AsyncTask<FoodData, Void, Void>() {
 
         override fun doInBackground(vararg params: FoodData): Void? {
-            if (params[0] == null) {
-                mAsyncTaskDao.deleteAll()
-            } else {
-                mAsyncTaskDao.insert(params[0])
+            when (type) {
+                1 -> {
+                    mAsyncTaskDao.insert(params[0])
+                }
+                2 -> {
+                    mAsyncTaskDao.update(params[0])
+                }
+                3 -> {
+                    mAsyncTaskDao.delete(params[0])
+                }
+                4 -> {
+                    mAsyncTaskDao.deleteAll()
+                }
             }
             return null
         }

@@ -14,14 +14,17 @@ import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 
 class FoodDialog : DialogFragment() {
-    private val IMAGE_PICK_CODE = 1000
-    private lateinit var foodData: FoodData
-    private var pos: Int = -1
+    private val imagePickCode = 1000
+    private var foodData: FoodData? = null
     private lateinit var listener: FoodDialogListener
     private lateinit var foodImage: ImageView
 
     interface FoodDialogListener {
-        fun onDialogPositiveClick(dialog: DialogFragment, foodData: FoodData, pos: Int)
+        fun onDialogPositiveClick(dialog: DialogFragment, foodData: FoodData)
+    }
+
+    fun dataToUpdate(foodData: FoodData) {
+        this.foodData = foodData
     }
 
     override fun onAttach(context: Context) {
@@ -44,30 +47,32 @@ class FoodDialog : DialogFragment() {
         val editItemCategory = dialogView.findViewById<EditText>(R.id.editItemCategory)
         val editItemSpiciness = dialogView.findViewById<EditText>(R.id.editItemSpiciness)
         val editItemPrice = dialogView.findViewById<EditText>(R.id.editItemPrice)
-        if (pos != -1) {
-            Glide.with(this).load(foodData.image).centerCrop()
-                .placeholder(R.drawable.imageplaceholder).into(foodImage)
-            editItemName.text = Editable.Factory.getInstance().newEditable(foodData.name)
-            editItemCategory.text = Editable.Factory.getInstance().newEditable(foodData.category)
-            editItemSpiciness.text = Editable.Factory.getInstance().newEditable(foodData.spiciness)
-            editItemPrice.text = Editable.Factory.getInstance().newEditable(foodData.price.toString())
-        } else {
+        if (tag.equals(getString(R.string.fda))) {
             foodData = FoodData(null, "", "", "", "", 0.0)
+        } else {
+            if (foodData == null) foodData = FoodData(tag!!.toInt(), "", "", "", "", 0.0)
+            if (foodData != null) {
+                setImage()
+                editItemName.text = getEditableText(foodData!!.name)
+                editItemCategory.text = getEditableText(foodData!!.category)
+                editItemSpiciness.text = getEditableText(foodData!!.spiciness)
+                editItemPrice.text = getEditableText(foodData!!.price.toString())
+            }
         }
 
         dialogView.findViewById<ImageView>(R.id.foodImage).setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = "image/*"
-            startActivityForResult(intent, IMAGE_PICK_CODE)
+            startActivityForResult(intent, imagePickCode)
         }
 
         builder.setView(dialogView)
         builder.setPositiveButton(R.string.ok) { _, _ ->
-            foodData.name = editItemName.text.toString()
-            foodData.category = editItemCategory.text.toString()
-            foodData.spiciness = editItemSpiciness.text.toString()
-            foodData.price = editItemPrice.text.toString().toDouble()
-            listener.onDialogPositiveClick(this, foodData, pos)
+            foodData!!.name = editItemName.text.toString()
+            foodData!!.category = editItemCategory.text.toString()
+            foodData!!.spiciness = editItemSpiciness.text.toString()
+            foodData!!.price = editItemPrice.text.toString().toDouble()
+            listener.onDialogPositiveClick(this, foodData!!)
         }
         builder.setNegativeButton(R.string.cancel) { dialog, _ ->
             dialog.dismiss()
@@ -76,15 +81,19 @@ class FoodDialog : DialogFragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
-            foodImage.setImageURI(data?.data)
-            this.foodData.image = data?.data.toString()
-        }
         super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == imagePickCode) {
+            foodData!!.image = data?.data.toString()
+            setImage()
+        }
     }
 
-    fun dataToUpdate(foodData: FoodData, pos: Int) {
-        this.foodData = foodData
-        this.pos = pos
+    private fun setImage() {
+        Glide.with(this).load(foodData!!.image).centerCrop()
+            .placeholder(R.drawable.imageplaceholder).into(foodImage)
+    }
+
+    private fun getEditableText(text: String): Editable {
+        return Editable.Factory.getInstance().newEditable(text)
     }
 }

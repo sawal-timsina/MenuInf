@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
         foodViewModel.allFoodData.observe(
             this,
             Observer { foodArray ->
-                foodAdapter.setFoodArray(foodArray as MutableList<FoodData>)
+                foodAdapter.submitList(foodArray as MutableList<FoodData>)
             })
 
         floatingActionButton.setOnClickListener {
@@ -59,12 +59,11 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
         val searchItem = menu.findItem(R.id.action_search)
         searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-                return true
+                return false
             }
 
             override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-
-                return true
+                return false
             }
         })
         val searchView = searchItem.actionView as SearchView
@@ -79,34 +78,36 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
                 } else {
 //                    foodAdapter.setFoodArray(Adapter.foodArray_)
                 }
-                return true
+                return false
             }
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                return true
+                return false
             }
         })
         return true
     }
 
     private fun onDeleteClicked(pos: Int) {
-        foodAdapter.removeData(pos)
+        foodAdapter.notifyItemRemoved(pos)
     }
 
     private fun onUpdateClicked(pos: Int) {
         val dialog = FoodDialog()
-        dialog.dataToUpdate(foodAdapter.getData(pos), pos)
-        dialog.show(supportFragmentManager, "FoodDialogUpdate")
+        dialog.dataToUpdate(foodAdapter.getDataAt(pos))
+        dialog.show(supportFragmentManager, foodViewModel.allFoodData.value!![pos].id.toString())
     }
 
     private fun onItemClicked(pos: Int) {
         startActivity(Intent(this@MainActivity, ItemDetails::class.java))
     }
 
-    override fun onDialogPositiveClick(dialog: DialogFragment, foodData: FoodData, pos: Int) {
-        if (pos == -1) {
+    override fun onDialogPositiveClick(dialog: DialogFragment, foodData: FoodData) {
+        if (dialog.tag.equals(getString(R.string.fda))) {
             foodViewModel.insert(foodData)
         } else {
+            foodViewModel.update(foodData)
+            foodAdapter.notifyItemChanged(foodViewModel.allFoodData.value!!.indexOf(foodData))
         }
     }
 }

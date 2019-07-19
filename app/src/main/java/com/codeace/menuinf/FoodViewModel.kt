@@ -1,10 +1,10 @@
 package com.codeace.menuinf
 
 import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
 
-class FoodViewModel(application: Application) : ViewModel() {
+class FoodViewModel(application: Application) : AndroidViewModel(application) {
 
     private val foodRepository: FoodRepository = FoodRepository(application)
 
@@ -20,6 +20,10 @@ class FoodViewModel(application: Application) : ViewModel() {
 
     fun update(foodData: FoodData) {
         foodRepository.update(foodData)
+    }
+
+    fun delete(foodData: FoodData) {
+        foodRepository.delete(foodData)
     }
 
     fun deleteAll() {
