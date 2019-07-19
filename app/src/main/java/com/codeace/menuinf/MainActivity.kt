@@ -1,12 +1,9 @@
 package com.codeace.menuinf
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -57,7 +54,11 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         val searchItem = menu.findItem(R.id.action_search)
-        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+        searchItem.setOnMenuItemClickListener {
+
+            true
+        }
+        /*searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem): Boolean {
                 return false
             }
@@ -84,7 +85,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 return false
             }
-        })
+        })*/
         return true
     }
 
