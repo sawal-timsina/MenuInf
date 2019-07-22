@@ -11,7 +11,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import com.codeace.menuinf.Adapter.Companion.setImage
+import com.codeace.menuinf.FoodAdapter.Companion.setImage
 
 class FoodDialog : DialogFragment() {
     private val imagePickCode = 1000
