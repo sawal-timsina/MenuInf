@@ -34,7 +34,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/toolbar"
                 tools:listitem="@layout/item_layout"/>
-        <!--<com.google.android.material.floatingactionbutton.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/floatingActionButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
                 app:backgroundTint="@color/colorAccent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:srcCompat="@drawable/ic_add_black_24dp"/>-->
+                app:srcCompat="@drawable/ic_add_black_24dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
@@ -97,7 +97,9 @@
                     android:layout_height="wrap_content"
                     android:max="100"
                     android:padding="8dp"
-                    android:progress="50" app:layout_constraintStart_toStartOf="parent"
+                    style="@style/Widget.AppCompat.SeekBar.Discrete"
+                    android:progress="50"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/priceNav"/>
             <TextView
                     android:id="@+id/categoryNav"
