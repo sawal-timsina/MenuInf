@@ -1,4 +1,4 @@
-package com.codeace.menuinf
+package com.codeace.menuinf.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -11,13 +11,17 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.codeace.menuinf.foodData.FoodData
+import com.codeace.menuinf.R
 import kotlinx.android.synthetic.main.item_layout.view.*
 
 
 class FoodAdapter(
     private val clickListener: (Int, Pair<View, String>) -> Unit, private val deleteListener: (Int) -> Unit,
     private val updateListener: (Int) -> Unit
-) : ListAdapter<FoodData, FoodAdapter.ViewHolder>(DIFF_CALLBACK) {
+) : ListAdapter<FoodData, FoodAdapter.ViewHolder>(
+    DIFF_CALLBACK
+) {
 
     fun getDataAt(position: Int): FoodData {
         return getItem(position)
@@ -51,7 +55,11 @@ class FoodAdapter(
                 }
                 true
             }
-            setImage(itemView.context, foodData.image, itemView.iFoodImage)
+            setImage(
+                itemView.context,
+                foodData.image,
+                itemView.iFoodImage
+            )
             itemView.iFoodName.text = foodData.name
             itemView.iFoodPrice.text = foodData.price.toString().plus(" Rs")
             itemView.optionButton.setOnClickListener {

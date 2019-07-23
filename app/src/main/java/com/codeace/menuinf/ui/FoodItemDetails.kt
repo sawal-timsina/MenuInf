@@ -1,7 +1,10 @@
-package com.codeace.menuinf
+package com.codeace.menuinf.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.codeace.menuinf.foodData.FoodData
+import com.codeace.menuinf.R
+import com.codeace.menuinf.adapters.FoodAdapter
 import kotlinx.android.synthetic.main.item_details.*
 
 

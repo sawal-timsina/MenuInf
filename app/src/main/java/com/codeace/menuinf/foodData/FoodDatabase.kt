@@ -1,4 +1,4 @@
-package com.codeace.menuinf
+package com.codeace.menuinf.foodData
 
 import android.content.Context
 import androidx.room.Database

@@ -1,8 +1,11 @@
-package com.codeace.menuinf
+package com.codeace.menuinf.dataHolders
 
 import android.app.Application
 import android.os.AsyncTask
 import androidx.lifecycle.LiveData
+import com.codeace.menuinf.foodData.FoodData
+import com.codeace.menuinf.foodData.FoodDataDao
+import com.codeace.menuinf.foodData.FoodDatabase
 
 class FoodRepository internal constructor(application: Application) {
 

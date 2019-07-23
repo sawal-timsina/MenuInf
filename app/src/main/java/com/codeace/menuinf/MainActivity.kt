@@ -1,6 +1,5 @@
 package com.codeace.menuinf
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.transition.Explode
@@ -21,18 +20,35 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.codeace.menuinf.adapters.FoodAdapter
+import com.codeace.menuinf.dataHolders.FoodViewModel
+import com.codeace.menuinf.foodData.FoodData
+import com.codeace.menuinf.ui.FoodDialog
+import com.codeace.menuinf.ui.FoodItemDetails
+import com.innovattic.rangeseekbar.RangeSeekBar
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.view.*
+import kotlinx.android.synthetic.main.app_bar_layout.*
+import kotlinx.android.synthetic.main.nav_layout.*
 import java.io.Serializable
 
-class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
+class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener, RangeSeekBar.SeekBarChangeListener {
+    override fun onStartedSeeking() {
+    }
+    override fun onStoppedSeeking() {
+    }
 
-    private lateinit var foodViewModel: FoodViewModel
+    override fun onValueChanged(minThumbValue: Int, maxThumbValue: Int) {
+        minText.text = "$minThumbValue"
+        maxText.text = "$maxThumbValue"
+        foodAdapter.submitList(foodVM.filterByData(minThumbValue.toDouble(), maxThumbValue.toDouble()))
+    }
+
+    private lateinit var foodVM: FoodViewModel
     private var foodAdapter = FoodAdapter(
         { pos: Int, image: Pair<View, String> -> onItemClicked(pos, image) },
         { pos: Int -> onDeleteClicked(pos) },
         { pos: Int -> onUpdateClicked(pos) })
-
-    private var categoryListItems = mutableSetOf("Select Category")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,33 +60,41 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
 
         itemRecyclerView.layoutManager = LinearLayoutManager(this)
         itemRecyclerView.adapter = foodAdapter
+        itemRecyclerView.setHasFixedSize(true)
 
         categoryList.choiceMode = ListView.CHOICE_MODE_MULTIPLE
         categoryList.divider = null
 
-        foodViewModel = ViewModelProviders.of(this, object : ViewModelProvider.Factory {
+        rangeSeekBar.seekBarChangeListener = this
+
+        foodVM = ViewModelProviders.of(this, object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
                 return FoodViewModel(application) as T
             }
         }).get(FoodViewModel::class.java)
 
-        foodViewModel.allFoodData.observe(this, Observer { foodArray ->
-            foodAdapter.submitList(foodArray as MutableList<FoodData>)
-            getCategories().also {
+        foodVM.allFoodData.observe(this, Observer { foodArray ->
+            foodAdapter.submitList(foodArray)
+            foodVM.getCategories().also {
                 categoryList.adapter =
-                    ArrayAdapter(this@MainActivity, R.layout.nav_header, categoryListItems.toList())
+                    ArrayAdapter(this@MainActivity, R.layout.nav_header, foodVM.categoryListItems.toList())
+                rangeSeekBar.max = foodVM._maxPrice.toInt()
             }
         })
 
         floatingActionButton.setOnClickListener {
             val dialog = FoodDialog()
+            dialog.isCancelable = false
             dialog.show(supportFragmentManager, "FoodDialogAdd")
         }
 
         floatingActionButton.setOnLongClickListener {
-            foodViewModel.deleteAll()
+            foodVM.deleteAll()
             true
         }
+
+        minText.text = "0"
+        maxText.text = foodVM._maxPrice.toString()
 
         val toggle = ActionBarDrawerToggle(
             this, drawer_layout, toolbar, R.string.drawer_open, R.string.drawer_close
@@ -78,15 +102,13 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
-        categoryList.setOnItemClickListener { parent, view, position, id ->
-            if (position != 0) {
-                val listItems = foodViewModel.allFoodData.value!!.filter { s ->
-                    s.category == categoryListItems.toList()[position]
-                }
-                foodAdapter.submitList(listItems)
-            } else {
-                foodAdapter.submitList(foodViewModel.allFoodData.value!!)
-            }
+        categoryList.setOnItemClickListener { _, view, position, _ ->
+            if (foodVM.selectedCategories.contains(position)) foodVM.selectedCategories.remove(position)
+            else foodVM.selectedCategories.add(position)
+
+            view.background = resources.getDrawable(if (foodVM.selectedCategories.contains(position)) R.drawable.selected else R.drawable.dselected,null)
+
+            foodAdapter.submitList(foodVM.filterByData(rangeSeekBar.getMinThumbValue().toDouble(), rangeSeekBar.getMaxThumbValue().toDouble()))
 
             drawer_layout.closeDrawer(GravityCompat.START)
         }
@@ -95,6 +117,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
+        } else {
             super.onBackPressed()
         }
     }
@@ -108,6 +131,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
             }
 
             override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+                foodAdapter.submitList(foodVM.filterByData(rangeSeekBar.getMinThumbValue().toDouble(), rangeSeekBar.getMaxThumbValue().toDouble()))
                 return true
             }
         })
@@ -115,15 +139,14 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
         searchView.isSubmitButtonEnabled = true
         searchView.queryHint = getString(R.string.action_search)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            @SuppressLint("DefaultLocale")
             override fun onQueryTextChange(newText: String): Boolean {
                 if (newText.isNotEmpty()) {
-                    val listItems = foodViewModel.allFoodData.value!!.filter { s ->
-                        s.name.toLowerCase().contains(newText.toLowerCase())
+                    val listItems = foodVM.allFoodData.value!!.filter { s ->
+                        s.name.contains(newText,true)
                     }
                     foodAdapter.submitList(listItems)
                 } else {
-                    foodAdapter.submitList(foodViewModel.allFoodData.value!!)
+                    foodAdapter.submitList(foodVM.allFoodData.value!!)
                 }
                 return true
             }
@@ -137,18 +160,19 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
 
     override fun onDialogPositiveClick(dialog: DialogFragment, foodData: FoodData) {
         if (dialog.tag.equals(getString(R.string.fda))) {
-            foodViewModel.insert(foodData)
+            foodVM.insert(foodData)
         } else {
-            foodViewModel.update(foodData)
+            foodVM.update(foodData)
         }
     }
 
     private fun onDeleteClicked(pos: Int) {
-        foodViewModel.delete(foodViewModel.allFoodData.value!![pos])
+        foodVM.delete(foodVM.allFoodData.value!![pos])
     }
 
     private fun onUpdateClicked(pos: Int) {
         val dialog = FoodDialog()
+        dialog.isCancelable = false
         dialog.dataToUpdate(foodAdapter.getDataAt(pos))
         dialog.show(supportFragmentManager, foodAdapter.getDataAt(pos).id.toString())
     }
@@ -158,11 +182,5 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener {
         val option = ActivityOptionsCompat.makeSceneTransitionAnimation(this, image)
         intent.putExtra("extra_object", foodAdapter.getDataAt(pos) as Serializable)
         startActivity(intent, option.toBundle())
-    }
-
-    private fun getCategories() {
-        foodViewModel.allFoodData.value!!.forEach {
-            categoryListItems.add(it.category)
-        }
     }
 }

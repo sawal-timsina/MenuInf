@@ -1,4 +1,4 @@
-package com.codeace.menuinf
+package com.codeace.menuinf.foodData
 
 import androidx.lifecycle.LiveData
 import androidx.room.*

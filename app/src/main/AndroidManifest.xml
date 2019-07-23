@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".FoodItemDetails"
+                android:name=".ui.FoodItemDetails"
                 android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
