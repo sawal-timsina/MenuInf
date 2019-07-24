@@ -23,16 +23,17 @@ class FoodViewModel(application: Application) : AndroidViewModel(application) {
         allFoodData = foodRepository.allFoodData
     }
 
-//    fun setFoodDataList(foodData: List<FoodData>){
+//    fun setFoodDataList(foodData: List<FoodData>) {
 //        allFoodData.value = foodData
 //    }
 
-//    fun setDefaults(){
-//        allFoodData = MutableLiveData<List<FoodData>>()
-//    }
+    fun setDefaults() {
+        allFoodData = foodRepository.allFoodData
+    }
 
     fun getCategories() {
         categoryListItems.clear()
+        _maxPrice = 0.0
         allFoodData.value?.forEach {
             categoryListItems.add(it.category)
             _maxPrice = maxOf(_maxPrice, it.price)
@@ -42,7 +43,7 @@ class FoodViewModel(application: Application) : AndroidViewModel(application) {
     fun filterByData(minPrice: Double = 0.0, maxPrice: Double = 0.0): List<FoodData> {
         val listItem: MutableList<FoodData> = mutableListOf()
 
-        if(!selectedCategories.isNullOrEmpty()){
+        if (!selectedCategories.isNullOrEmpty()) {
             selectedCategories.forEach {
                 allFoodData.value?.filter { s -> s.category == categoryListItems.toList()[it] && s.price in minPrice..maxPrice }
                     ?.forEach {

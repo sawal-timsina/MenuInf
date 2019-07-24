@@ -5,7 +5,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.io.Serializable
 
-
 @Entity(tableName = "food_items")
 data class FoodData(
     @PrimaryKey(autoGenerate = true) val id: Int? = null,

@@ -27,23 +27,11 @@ import com.codeace.menuinf.ui.FoodDialog
 import com.codeace.menuinf.ui.FoodItemDetails
 import com.innovattic.rangeseekbar.RangeSeekBar
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.app_bar_layout.*
 import kotlinx.android.synthetic.main.nav_layout.*
 import java.io.Serializable
 
 class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener, RangeSeekBar.SeekBarChangeListener {
-    override fun onStartedSeeking() {
-    }
-    override fun onStoppedSeeking() {
-    }
-
-    override fun onValueChanged(minThumbValue: Int, maxThumbValue: Int) {
-        minText.text = "$minThumbValue"
-        maxText.text = "$maxThumbValue"
-        foodAdapter.submitList(foodVM.filterByData(minThumbValue.toDouble(), maxThumbValue.toDouble()))
-    }
-
     private lateinit var foodVM: FoodViewModel
     private var foodAdapter = FoodAdapter(
         { pos: Int, image: Pair<View, String> -> onItemClicked(pos, image) },
@@ -74,11 +62,13 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener, RangeSe
         }).get(FoodViewModel::class.java)
 
         foodVM.allFoodData.observe(this, Observer { foodArray ->
-            foodAdapter.submitList(foodArray)
+            foodAdapter.submitList(foodArray as MutableList<FoodData>)
             foodVM.getCategories().also {
                 categoryList.adapter =
                     ArrayAdapter(this@MainActivity, R.layout.nav_header, foodVM.categoryListItems.toList())
                 rangeSeekBar.max = foodVM._maxPrice.toInt()
+                minText.text = rangeSeekBar.getMinThumbValue().toString()
+                maxText.text = rangeSeekBar.getMaxThumbValue().toString()
             }
         })
 
@@ -93,12 +83,8 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener, RangeSe
             true
         }
 
-        minText.text = "0"
-        maxText.text = foodVM._maxPrice.toString()
+        val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.drawer_open, R.string.drawer_close)
 
-        val toggle = ActionBarDrawerToggle(
-            this, drawer_layout, toolbar, R.string.drawer_open, R.string.drawer_close
-        )
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
@@ -166,8 +152,17 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener, RangeSe
         }
     }
 
+    override fun onStartedSeeking() {}
+    override fun onStoppedSeeking() {}
+
+    override fun onValueChanged(minThumbValue: Int, maxThumbValue: Int) {
+        minText.text = "$minThumbValue"
+        maxText.text = "$maxThumbValue"
+        foodAdapter.submitList(foodVM.filterByData(minThumbValue.toDouble(), maxThumbValue.toDouble()))
+    }
+
     private fun onDeleteClicked(pos: Int) {
-        foodVM.delete(foodVM.allFoodData.value!![pos])
+        foodVM.delete(foodAdapter.getDataAt(pos))
     }
 
     private fun onUpdateClicked(pos: Int) {
