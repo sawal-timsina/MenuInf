@@ -34,6 +34,12 @@ class FoodRepository internal constructor(application: Application) {
         DatabaseAsyncTask(foodDataDao, 4).execute()
     }
 
+    fun insertAll(resultModel: List<FoodData>) {
+        resultModel.forEach {
+            insert(it)
+        }
+    }
+
     private class DatabaseAsyncTask internal constructor(private val mAsyncTaskDao: FoodDataDao, private val type: Int) : AsyncTask<FoodData, Void, Void>() {
         override fun doInBackground(vararg params: FoodData): Void? {
             when (type) {
