@@ -32,7 +32,7 @@ class ApiServiceFactory {
 
         try {
             val retrofit = Retrofit.Builder()
-                .baseUrl("")
+                .baseUrl("https://my-json-server.typicode.com/sawal11/MenuInf")
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(providesOkHttpClientBuilder())
