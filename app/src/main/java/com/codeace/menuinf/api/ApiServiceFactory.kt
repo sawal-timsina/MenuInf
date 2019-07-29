@@ -55,9 +55,7 @@ class ApiServiceFactory {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
         return data
-
     }
 
     private fun parseJson(response: String?): List<FoodData> {
