@@ -15,7 +15,6 @@ import androidx.fragment.app.DialogFragment
 import com.codeace.menuinf.R
 import com.codeace.menuinf.foodData.FoodData
 import com.codeace.menuinf.adapters.FoodAdapter.Companion.setImage
-import kotlinx.android.synthetic.main.dialog_layout.*
 
 class FoodDialog : DialogFragment() {
     private val imagePickCode = 1000

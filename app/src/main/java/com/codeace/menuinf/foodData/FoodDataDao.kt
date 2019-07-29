@@ -5,6 +5,7 @@ import androidx.room.*
 
 @Dao
 interface FoodDataDao {
+
     @get:Query("SELECT * from food_items ORDER BY food_name ASC")
     val allFoodData: LiveData<List<FoodData>>
 

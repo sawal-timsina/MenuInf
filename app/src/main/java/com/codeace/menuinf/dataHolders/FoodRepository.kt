@@ -16,13 +16,6 @@ class FoodRepository internal constructor(application: Application) {
         val db = FoodDatabase.getDatabase(application)
         foodDataDao = db!!.foodDataDao()
         allFoodData = foodDataDao.allFoodData
-        checkData()
-    }
-
-    fun checkData(){
-        foodDataDao.allFoodData.value?.forEach {
-            println(it)
-        }
     }
 
     fun insert(foodData: FoodData) {
@@ -42,7 +35,6 @@ class FoodRepository internal constructor(application: Application) {
     }
 
     private class DatabaseAsyncTask internal constructor(private val mAsyncTaskDao: FoodDataDao, private val type: Int) : AsyncTask<FoodData, Void, Void>() {
-
         override fun doInBackground(vararg params: FoodData): Void? {
             when (type) {
                 1 -> {
