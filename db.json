@@ -1,0 +1,44 @@
+{
+  "foodData": [
+    {
+      "id": 1,
+      "food_image": "https://via.placeholder.com/150/92c952",
+      "food_name": "Item 1",
+      "food_category": "Category1",
+      "food_spiciness": "Mild",
+      "food_price": 23
+    },
+    {
+      "id": 2,
+      "food_image": "https://via.placeholder.com/150/771796",
+      "food_name": "Item 2",
+      "food_category": "Category1",
+      "food_spiciness": "Light",
+      "food_price": 234
+    },
+    {
+      "id": 3,
+      "food_image": "https://via.placeholder.com/150/24f355",
+      "food_name": "Item 3",
+      "food_category": "Category2",
+      "food_spiciness": "Hot",
+      "food_price": 232
+    },
+    {
+      "id": 4,
+      "food_image": "https://via.placeholder.com/150/d32776",
+      "food_name": "Item 4",
+      "food_category": "Category1",
+      "food_spiciness": "Sweet",
+      "food_price": 2344
+    },
+    {
+      "id": 5,
+      "food_image": "https://via.placeholder.com/150/f66b97",
+      "food_name": "Item 5",
+      "food_category": "Category2",
+      "food_spiciness": "IDk",
+      "food_price": 2344
+    }
+  ]
+}
