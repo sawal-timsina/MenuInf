@@ -6,7 +6,7 @@
       "food_name": "hello"
       "food_category": "hello"
       "food_spiciness": "hello"
-      "food_price": "hello"
+      "food_price": 23
     },
     {
       "id": 2,
@@ -14,7 +14,7 @@
       "food_name": "hello"
       "food_category": "hello"
       "food_spiciness": "hello"
-      "food_price": "hello"
+      "food_price": 234
     },
     {
       "id": 3,
@@ -22,7 +22,7 @@
       "food_name": "hello"
       "food_category": "hello"
       "food_spiciness": "hello"
-      "food_price": "hello"
+      "food_price": 232
     },
     {
       "id": 4,
@@ -30,7 +30,7 @@
       "food_name": "hello"
       "food_category": "hello"
       "food_spiciness": "hello"
-      "food_price": "hello"
+      "food_price": 2344
     }
   ]
 }
