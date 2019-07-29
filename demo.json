@@ -1,0 +1,36 @@
+{
+  "foodData": [
+    {
+      "id": 1,
+      "food_image": "hello"
+      "food_name": "hello"
+      "food_category": "hello"
+      "food_spiciness": "hello"
+      "food_price": "hello"
+    },
+    {
+      "id": 2,
+      "food_image": "hello"
+      "food_name": "hello"
+      "food_category": "hello"
+      "food_spiciness": "hello"
+      "food_price": "hello"
+    },
+    {
+      "id": 3,
+      "food_image": "hello"
+      "food_name": "hello"
+      "food_category": "hello"
+      "food_spiciness": "hello"
+      "food_price": "hello"
+    },
+    {
+      "id": 4,
+      "food_image": "hello"
+      "food_name": "hello"
+      "food_category": "hello"
+      "food_spiciness": "hello"
+      "food_price": "hello"
+    }
+  ]
+}
