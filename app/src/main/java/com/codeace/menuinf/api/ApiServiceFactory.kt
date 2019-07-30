@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
 
 class ApiServiceFactory {
     private val retrofit = Retrofit.Builder()
-        .baseUrl("https://my-json-server.typicode.com/sawal11/MenuInf/")
+        .baseUrl("https://5d4027cec516a90014e89625.mockapi.io/api/")
         .addConverterFactory(GsonConverterFactory.create())
         .client(providesOkHttpClientBuilder())
         .build()
@@ -40,7 +40,7 @@ class ApiServiceFactory {
             service.insertFoodData(foodData).enqueue(object : Callback<FoodData> {
                 override fun onResponse(call: Call<FoodData>, response: Response<FoodData>) {
                     if (response.isSuccessful) {
-                        Log.d("Repository", "Response:::: " + response.body()!!)
+                        Log.d("Repository", "Success")
                     } else {
                         Log.d("Repository", "Failed to add item")
                     }
@@ -64,7 +64,7 @@ class ApiServiceFactory {
 
             service.requestData().enqueue(object : Callback<List<FoodData>> {
                 override fun onResponse(call: Call<List<FoodData>>, response: Response<List<FoodData>>) {
-                    Log.d("Repository", "Response::::" + response.body()!!)
+                    Log.d("Repository", "Response::::" + response.body().toString())
                     data.value = response.body()!!
                 }
 
