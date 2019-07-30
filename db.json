@@ -10,7 +10,7 @@
     },
     {
       "id": 2,
-      "food_image": "https://via.placeholder.com/150/771796",
+      "food_image": "",
       "food_name": "Item 2",
       "food_category": "Category1",
       "food_spiciness": "Light",
