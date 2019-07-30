@@ -4,20 +4,23 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.codeace.menuinf.foodData.FoodData
+import okhttp3.MediaType
 import okhttp3.OkHttpClient
-import org.json.JSONArray
-import org.json.JSONException
+import okhttp3.RequestBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
-import java.util.ArrayList
 import java.util.concurrent.TimeUnit
 
 class ApiServiceFactory {
+    private val retrofit = Retrofit.Builder()
+        .baseUrl("https://my-json-server.typicode.com/sawal11/MenuInf/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .client(providesOkHttpClientBuilder())
+        .build()
     private fun providesOkHttpClientBuilder(): OkHttpClient {
 
         val httpClient = OkHttpClient.Builder()
@@ -26,29 +29,46 @@ class ApiServiceFactory {
 
     }
 
-    fun providesWebService(): LiveData<List<FoodData>> {
-        val data = MutableLiveData<List<FoodData>>()
-        var webserviceResponseList: List<FoodData>
+    private fun initRetrofit(): ApiService {
+        return retrofit.create(ApiService::class.java)
+    }
 
+    fun insertFoodData(foodData: FoodData) {
         try {
-            val retrofit = Retrofit.Builder()
-                .baseUrl("https://my-json-server.typicode.com/sawal11/MenuInf")
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(providesOkHttpClientBuilder())
-                .build()
+            val service = initRetrofit()
 
-            //Defining retrofit api service
-            val service = retrofit.create(ApiService::class.java)
-            //  response = service.makeRequest().execute().body();
-            service.makeRequest().enqueue(object : Callback<String> {
-                override fun onResponse(call: Call<String>, response: Response<String>) {
-                    Log.d("Repository", "Response::::" + response.body()!!)
-                    webserviceResponseList = parseJson(response.body())
-                    data.value = webserviceResponseList
+            service.insertFoodData(foodData).enqueue(object : Callback<FoodData> {
+                override fun onResponse(call: Call<FoodData>, response: Response<FoodData>) {
+                    if (response.isSuccessful) {
+                        Log.d("Repository", "Response:::: " + response.body()!!)
+                    } else {
+                        Log.d("Repository", "Failed to add item")
+                    }
                 }
 
-                override fun onFailure(call: Call<String>, t: Throwable) {
+                override fun onFailure(call: Call<FoodData>, t: Throwable) {
+                    Log.d("Repository", "Failed to add item")
+                }
+            })
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun getFoodData(): LiveData<List<FoodData>> {
+        val data = MutableLiveData<List<FoodData>>()
+
+        try {
+            val service = initRetrofit()
+
+            service.requestData().enqueue(object : Callback<List<FoodData>> {
+                override fun onResponse(call: Call<List<FoodData>>, response: Response<List<FoodData>>) {
+                    Log.d("Repository", "Response::::" + response.body()!!)
+                    data.value = response.body()!!
+                }
+
+                override fun onFailure(call: Call<List<FoodData>>, t: Throwable) {
                     Log.d("Repository", "Failed:::")
                 }
             })
@@ -58,36 +78,17 @@ class ApiServiceFactory {
         return data
     }
 
-    private fun parseJson(response: String?): List<FoodData> {
+    private fun parseJson(response: FoodData): RequestBody {
 
-        val apiResults = ArrayList<FoodData>()
+        val json = JSONObject()
+        json.put("id", response.id)
+        json.put("food_image", response.image)
+        json.put("food_name",response.name)
+        json.put("food_category",response.category)
+        json.put("food_spiciness",response.spiciness)
+        json.put("food_price",response.price)
 
-        val jsonArray: JSONArray
-
-        try {
-            jsonArray = JSONArray(response)
-
-            for (i in 0 until jsonArray.length()) {
-                val jsonInfo: JSONObject = jsonArray.getJSONObject(i)
-
-                val foodModal = FoodData(
-                    Integer.parseInt(jsonInfo.getString("id")),
-                    jsonInfo.getString("food_image"),
-                    jsonInfo.getString("food_name"),
-                    jsonInfo.getString("food_category"),
-                    jsonInfo.getString("food_spiciness"),
-                    (jsonInfo.getString("food_price")).toDouble()
-                )
-                apiResults.add(foodModal)
-            }
-
-
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
-
-        Log.i(javaClass.simpleName, apiResults.size.toString())
-        return apiResults
+        return RequestBody.create(MediaType.parse("application/json"), json.toString())
 
     }
 }

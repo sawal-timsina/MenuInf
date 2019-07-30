@@ -23,9 +23,11 @@ class FoodViewModel(application: Application) : AndroidViewModel(application) {
         allFoodData = foodRepository.allFoodData
     }
 
-//    fun setFoodDataList(foodData: List<FoodData>) {
-//        allFoodData.value = foodData
-//    }
+    fun setFoodDataList(foodData: List<FoodData>) {
+        val data : MutableLiveData<List<FoodData>> = MutableLiveData()
+        data.value = foodData
+        allFoodData = data
+    }
 
     fun setDefaults() {
         allFoodData = foodRepository.allFoodData

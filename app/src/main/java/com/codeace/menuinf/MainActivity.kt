@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener, RangeSe
 
             view.background = resources.getDrawable(if (foodVM.selectedCategories.contains(position)) R.drawable.selected else R.drawable.dselected,null)
 
-            foodAdapter.submitList(foodVM.filterByData(rangeSeekBar.getMinThumbValue().toDouble(), rangeSeekBar.getMaxThumbValue().toDouble()))
+            foodVM.setFoodDataList(foodVM.filterByData(rangeSeekBar.getMinThumbValue().toDouble(), rangeSeekBar.getMaxThumbValue().toDouble()))
 
             drawer_layout.closeDrawer(GravityCompat.START)
         }
@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener, RangeSe
             }
 
             override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                foodAdapter.submitList(foodVM.filterByData(rangeSeekBar.getMinThumbValue().toDouble(), rangeSeekBar.getMaxThumbValue().toDouble()))
+                foodVM.setFoodDataList(foodVM.filterByData(rangeSeekBar.getMinThumbValue().toDouble(), rangeSeekBar.getMaxThumbValue().toDouble()))
                 return true
             }
         })
@@ -130,9 +130,9 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener, RangeSe
                     val listItems = foodVM.allFoodData.value!!.filter { s ->
                         s.name.contains(newText,true)
                     }
-                    foodAdapter.submitList(listItems)
+                    foodVM.setFoodDataList(listItems)
                 } else {
-                    foodAdapter.submitList(foodVM.allFoodData.value!!)
+                    foodVM.setDefaults()
                 }
                 return true
             }

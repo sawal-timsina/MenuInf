@@ -17,11 +17,11 @@ class FoodRepository internal constructor(application: Application) {
     init {
         val db = FoodDatabase.getDatabase(application)
         foodDataDao = db!!.foodDataDao()
-        allFoodData = apiServiceFactory.providesWebService()
+        allFoodData = apiServiceFactory.getFoodData()
     }
 
     fun insert(foodData: FoodData) {
-        DatabaseAsyncTask(foodDataDao, 1).execute(foodData)
+        apiServiceFactory.insertFoodData(foodData)
     }
 
     fun update(foodData: FoodData) {
@@ -38,7 +38,7 @@ class FoodRepository internal constructor(application: Application) {
 
     fun insertAll(resultModel: List<FoodData>) {
         resultModel.forEach {
-            insert(it)
+            DatabaseAsyncTask(foodDataDao, 1).execute(it)
         }
     }
 
