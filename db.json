@@ -40,5 +40,13 @@
       "food_spiciness": "IDk",
       "food_price": 2344
     },
+    {
+      "id": 6,
+      "food_image": "https://via.placeholder.com/150/f66b97",
+      "food_name": "Item 6",
+      "food_category": "Category2",
+      "food_spiciness": "Spiciness 1",
+      "food_price": 123
+    }
   ]
 }
