@@ -1,5 +1,6 @@
 package com.codeace.menuinf.api
 
+import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,12 +16,33 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-class ApiServiceFactory {
+class ApiServiceFactory internal constructor(application: Application){
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://5d4027cec516a90014e89625.mockapi.io/api/")
         .addConverterFactory(GsonConverterFactory.create())
         .client(providesOkHttpClientBuilder())
         .build()
+
+    private var listener: ApiResponseListener
+
+    init {
+        try {
+            listener = application as ApiResponseListener
+        } catch (e: ClassCastException) {
+            throw ClassCastException(
+                (application.toString() +
+                        " must implement ApiResponseListener")
+            )
+        }
+    }
+
+    interface ApiResponseListener {
+        fun onGetFoodDAta(foodData: List<FoodData>)
+        fun onInsertFoodDAta(foodData: FoodData)
+        fun onUpdateFoodDAta(foodData: FoodData)
+        fun onDeleteFoodDAta(foodData: FoodData)
+    }
+
     private fun providesOkHttpClientBuilder(): OkHttpClient {
 
         val httpClient = OkHttpClient.Builder()
@@ -29,18 +51,18 @@ class ApiServiceFactory {
 
     }
 
-    private fun initRetrofit(): ApiService {
+    private fun getApiService(): ApiService {
         return retrofit.create(ApiService::class.java)
     }
 
     fun insertFoodData(foodData: FoodData) {
         try {
-            val service = initRetrofit()
+            val service = getApiService()
 
             service.insertFoodData(foodData).enqueue(object : Callback<FoodData> {
                 override fun onResponse(call: Call<FoodData>, response: Response<FoodData>) {
                     if (response.isSuccessful) {
-                        Log.d("Repository", "Success")
+                        Log.d("Repository", "POST Success with response code : ".plus( response.code() ))
                     } else {
                         Log.d("Repository", "Failed to add item")
                     }
@@ -60,12 +82,13 @@ class ApiServiceFactory {
         val data = MutableLiveData<List<FoodData>>()
 
         try {
-            val service = initRetrofit()
+            val service = getApiService()
 
             service.requestData().enqueue(object : Callback<List<FoodData>> {
                 override fun onResponse(call: Call<List<FoodData>>, response: Response<List<FoodData>>) {
-                    Log.d("Repository", "Response::::" + response.body().toString())
+                    Log.d("Repository", "GET success with response code : ".plus( response.code() ))
                     data.value = response.body()!!
+                    listener.onGetFoodDAta(response.body()!!)
                 }
 
                 override fun onFailure(call: Call<List<FoodData>>, t: Throwable) {

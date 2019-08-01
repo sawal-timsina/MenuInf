@@ -8,16 +8,31 @@ import com.codeace.menuinf.foodData.FoodData
 import com.codeace.menuinf.foodData.FoodDataDao
 import com.codeace.menuinf.foodData.FoodDatabase
 
-class FoodRepository internal constructor(application: Application) {
-
+class FoodRepository internal constructor(application: Application): ApiServiceFactory.ApiResponseListener {
     private val foodDataDao: FoodDataDao
     internal val allFoodData: LiveData<List<FoodData>>
-    private val apiServiceFactory : ApiServiceFactory = ApiServiceFactory()
+    private val apiServiceFactory : ApiServiceFactory = ApiServiceFactory(application)
 
     init {
         val db = FoodDatabase.getDatabase(application)
         foodDataDao = db!!.foodDataDao()
         allFoodData = apiServiceFactory.getFoodData()
+    }
+
+    override fun onGetFoodDAta(foodData: List<FoodData>) {
+
+    }
+
+    override fun onInsertFoodDAta(foodData: FoodData) {
+
+    }
+
+    override fun onUpdateFoodDAta(foodData: FoodData) {
+
+    }
+
+    override fun onDeleteFoodDAta(foodData: FoodData) {
+
     }
 
     fun insert(foodData: FoodData) {
