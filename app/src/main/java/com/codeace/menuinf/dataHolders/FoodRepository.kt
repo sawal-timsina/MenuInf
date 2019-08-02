@@ -3,40 +3,22 @@ package com.codeace.menuinf.dataHolders
 import android.app.Application
 import android.os.AsyncTask
 import androidx.lifecycle.LiveData
-import com.codeace.menuinf.api.ApiServiceFactory
 import com.codeace.menuinf.foodData.FoodData
 import com.codeace.menuinf.foodData.FoodDataDao
 import com.codeace.menuinf.foodData.FoodDatabase
 
-class FoodRepository internal constructor(application: Application): ApiServiceFactory.ApiResponseListener {
+class FoodRepository internal constructor(application: Application) {
     private val foodDataDao: FoodDataDao
     internal val allFoodData: LiveData<List<FoodData>>
-    private val apiServiceFactory : ApiServiceFactory = ApiServiceFactory(application)
-
     init {
         val db = FoodDatabase.getDatabase(application)
         foodDataDao = db!!.foodDataDao()
-        allFoodData = apiServiceFactory.getFoodData()
-    }
-
-    override fun onGetFoodDAta(foodData: List<FoodData>) {
-
-    }
-
-    override fun onInsertFoodDAta(foodData: FoodData) {
-
-    }
-
-    override fun onUpdateFoodDAta(foodData: FoodData) {
-
-    }
-
-    override fun onDeleteFoodDAta(foodData: FoodData) {
-
+        allFoodData = foodDataDao.allFoodData
     }
 
     fun insert(foodData: FoodData) {
-        apiServiceFactory.insertFoodData(foodData)
+//        apiServiceFactory.insertFoodData(foodData)
+        DatabaseAsyncTask(foodDataDao, 1).execute(foodData)
     }
 
     fun update(foodData: FoodData) {

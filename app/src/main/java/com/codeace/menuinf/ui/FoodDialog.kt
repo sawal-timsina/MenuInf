@@ -44,6 +44,7 @@ class FoodDialog : DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater,container: ViewGroup?,savedInstanceState: Bundle?): View? {
         val dialogView = inflater.inflate(R.layout.dialog_layout, container, true)
+        dialogView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         foodImage = dialogView.findViewById(R.id.foodImage)
         val editItemName = dialogView.findViewById<EditText>(R.id.itemName_)
         val editItemCategory = dialogView.findViewById<EditText>(R.id.itemCategory_)

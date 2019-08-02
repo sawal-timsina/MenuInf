@@ -30,8 +30,13 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_layout.*
 import kotlinx.android.synthetic.main.nav_layout.*
 import java.io.Serializable
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+
 
 class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener, RangeSeekBar.SeekBarChangeListener {
+
+    private lateinit var mAuth: FirebaseAuth
     private lateinit var foodVM: FoodViewModel
     private var foodAdapter = FoodAdapter(
         { pos: Int, image: Pair<View, String> -> onItemClicked(pos, image) },
@@ -45,6 +50,8 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener, RangeSe
 
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+
+        mAuth = FirebaseAuth.getInstance()
 
         itemRecyclerView.layoutManager = LinearLayoutManager(this)
         itemRecyclerView.adapter = foodAdapter
@@ -98,6 +105,13 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener, RangeSe
 
             drawer_layout.closeDrawer(GravityCompat.START)
         }
+    }
+
+    public override fun onStart() {
+        super.onStart()
+        // Check if user is signed in (non-null) and update UI accordingly.
+        val currentUser = mAuth.currentUser
+//        updateUI(currentUser)
     }
 
     override fun onBackPressed() {
