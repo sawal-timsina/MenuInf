@@ -14,7 +14,7 @@ import android.widget.ImageView
 import androidx.fragment.app.DialogFragment
 import com.codeace.menuinf.R
 import com.codeace.menuinf.foodData.FoodData
-import com.codeace.menuinf.adapters.FoodAdapter.Companion.setImage
+import com.codeace.menuinf.helpers.setImage
 
 class FoodDialog : DialogFragment() {
     private val imagePickCode = 1000
@@ -43,8 +43,7 @@ class FoodDialog : DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater,container: ViewGroup?,savedInstanceState: Bundle?): View? {
-        val dialogView = inflater.inflate(R.layout.dialog_layout, container, true)
-        dialogView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        val dialogView = inflater.inflate(R.layout.dialog_layout, container, false)
         foodImage = dialogView.findViewById(R.id.foodImage)
         val editItemName = dialogView.findViewById<EditText>(R.id.itemName_)
         val editItemCategory = dialogView.findViewById<EditText>(R.id.itemCategory_)

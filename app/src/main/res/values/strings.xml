@@ -25,4 +25,7 @@
     <string name="category">Category</string>
     <string name="filter_by">Filter By</string>
     <string name="field_error">Field Cannot be empty!!!</string>
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
 </resources>

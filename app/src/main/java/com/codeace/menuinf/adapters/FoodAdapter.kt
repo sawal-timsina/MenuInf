@@ -1,18 +1,17 @@
 package com.codeace.menuinf.adapters
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.util.Pair
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.codeace.menuinf.foodData.FoodData
 import com.codeace.menuinf.R
+import com.codeace.menuinf.helpers.setImage
 import kotlinx.android.synthetic.main.item_layout.view.*
 
 
@@ -22,6 +21,7 @@ class FoodAdapter(
 ) : ListAdapter<FoodData, FoodAdapter.ViewHolder>(
     DIFF_CALLBACK
 ) {
+    var visibility = false
 
     fun getDataAt(position: Int): FoodData {
         return getItem(position)
@@ -34,53 +34,45 @@ class FoodAdapter(
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bindItems(getItem(position), clickListener, deleteListener, updateListener)
+        holder.bindItems(getItem(position), visibility, clickListener, deleteListener, updateListener)
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindItems(
-            foodData: FoodData, clickListener: (Int, Pair<View, String>) -> Unit,
+        fun bindItems(foodData: FoodData,visible : Boolean, clickListener: (Int, Pair<View, String>) -> Unit,
             deleteListener: (Int) -> Unit, updateListener: (Int) -> Unit
         ) {
-            val popupMenu = PopupMenu(itemView.context, itemView.optionButton)
-            popupMenu.menuInflater.inflate(R.menu.recycler_menu, popupMenu.menu)
-            popupMenu.setOnMenuItemClickListener { item ->
-                when (item.itemId) {
-                    R.id.action_delete -> {
-                        deleteListener(adapterPosition)
-                    }
-                    R.id.action_update -> {
-                        updateListener(adapterPosition)
-                    }
-                }
-                true
-            }
-            setImage(
-                itemView.context,
-                foodData.image,
-                itemView.iFoodImage
-            )
+            setImage(itemView.context, foodData.image, itemView.iFoodImage)
             itemView.iFoodName.text = foodData.name
             itemView.iFoodPrice.text = foodData.price.toString().plus(" Rs")
-            itemView.optionButton.setOnClickListener {
-                popupMenu.show()
-            }
             itemView.setOnClickListener {
                 clickListener(adapterPosition, Pair.create(itemView.iFoodImage, "FoodImage"))
             }
-            itemView.setOnLongClickListener {
-                popupMenu.show()
-                true
-            }
+            if(visible){
+                val popupMenu = PopupMenu(itemView.context, itemView.optionButton)
+                popupMenu.menuInflater.inflate(R.menu.recycler_menu, popupMenu.menu)
+                popupMenu.setOnMenuItemClickListener { item ->
+                    when (item.itemId) {
+                        R.id.action_delete -> {
+                            deleteListener(adapterPosition)
+                        }
+                        R.id.action_update -> {
+                            updateListener(adapterPosition)
+                        }
+                    }
+                    true
+                }
+                itemView.optionButton.setOnClickListener {
+                    popupMenu.show()
+                }
+                itemView.setOnLongClickListener {
+                    popupMenu.show()
+                    true
+                }
+            } else { itemView.optionButton.visibility = View.GONE }
         }
     }
 
     companion object {
-
-        fun setImage(context: Context, url: String, imageView: ImageView) {
-            Glide.with(context).load(url).centerCrop()
-                .placeholder(R.drawable.imageplaceholder).into(imageView)
-        }
 
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<FoodData>() {
             override fun areItemsTheSame(oldItem: FoodData, newItem: FoodData): Boolean {
