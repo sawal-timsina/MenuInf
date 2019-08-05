@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".ui.FoodItemDetails">
+        tools:context=".ui.activity.FoodItemDetails">
 
         <ImageView
                 android:id="@+id/foodImage"

@@ -1,4 +1,4 @@
-package com.codeace.menuinf.ui
+package com.codeace.menuinf.ui.fragments
 
 import android.app.Activity
 import android.content.Context
@@ -40,6 +40,12 @@ class FoodDialog : DialogFragment() {
                         " must implement FoodDialogListener")
             )
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        isCancelable = false
+        setStyle(STYLE_NO_FRAME, android.R.style.Theme_Material_Light_Dialog)
     }
 
     override fun onCreateView(inflater: LayoutInflater,container: ViewGroup?,savedInstanceState: Bundle?): View? {
