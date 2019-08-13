@@ -172,9 +172,9 @@
         android:layout_height="@dimen/button_height"
         android:layout_marginStart="@dimen/button_height"
         android:layout_marginEnd="@dimen/button_height"
-        android:clickable="true"
-        android:clipChildren="true"
         android:focusable="true"
+        android:clickable="true"
+        app:rippleColor="#cfd8dc"
         app:cardBackgroundColor="@color/button_color"
         app:cardCornerRadius="30dp"
         app:cardElevation="5dp"
@@ -215,11 +215,9 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/secondaryText"
         android:textSize="18sp"
-        app:cornerRadius="25dp"
         app:layout_constraintBottom_toTopOf="@id/signUpButton"
         app:layout_constraintEnd_toEndOf="@id/viewBottom"
-        app:layout_constraintStart_toStartOf="@id/viewBottom"
-        app:rippleColor="@color/colorAccent" />
+        app:layout_constraintStart_toStartOf="@id/viewBottom" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/signUpButton"
