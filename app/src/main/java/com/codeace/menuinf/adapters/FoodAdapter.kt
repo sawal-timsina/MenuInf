@@ -5,12 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.util.Pair
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.codeace.menuinf.foodData.FoodData
 import com.codeace.menuinf.R
+import com.codeace.menuinf.foodData.FoodData
 import com.codeace.menuinf.helpers.setImage
 import kotlinx.android.synthetic.main.item_layout.view.*
 
@@ -41,9 +40,9 @@ class FoodAdapter(
         fun bindItems(foodData: FoodData,visible : Boolean, clickListener: (Int, Pair<View, String>) -> Unit,
             deleteListener: (Int) -> Unit, updateListener: (Int) -> Unit
         ) {
-            setImage(itemView.context, foodData.image, itemView.iFoodImage)
-            itemView.iFoodName.text = foodData.name
-            itemView.iFoodPrice.text = foodData.price.toString().plus(" Rs")
+            setImage(itemView.context, foodData.food_image, itemView.iFoodImage)
+            itemView.iFoodName.text = foodData.food_name
+            itemView.iFoodPrice.text = foodData.food_price.toString().plus(" Rs")
             itemView.setOnClickListener {
                 clickListener(adapterPosition, Pair.create(itemView.iFoodImage, "FoodImage"))
             }
@@ -80,10 +79,10 @@ class FoodAdapter(
             }
 
             override fun areContentsTheSame(oldItem: FoodData, newItem: FoodData): Boolean {
-                return oldItem.name == newItem.name &&
-                        oldItem.category == newItem.category &&
-                        oldItem.spiciness == newItem.spiciness &&
-                        oldItem.price == newItem.price
+                return oldItem.food_name == newItem.food_name &&
+                        oldItem.food_category == newItem.food_category &&
+                        oldItem.food_spiciness == newItem.food_spiciness &&
+                        oldItem.food_price == newItem.food_price
             }
         }
     }

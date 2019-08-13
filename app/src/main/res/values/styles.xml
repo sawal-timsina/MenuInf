@@ -11,9 +11,16 @@
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+    <style name="LoginTheme" parent="AppTheme.NoActionBar">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+    </style>
 
     <style name="NavListText">
         <item name="android:textColor">@color/primaryText</item>
@@ -32,6 +39,8 @@
     </style>
 
     <style name="TextViewBig" parent="TextView">
-        <item name="android:textSize">30sp</item>
+        <item name="android:textColor">@color/primaryText</item>
+        <item name="android:textSize">23sp</item>
+        <item name="android:textAllCaps">true</item>
     </style>
 </resources>

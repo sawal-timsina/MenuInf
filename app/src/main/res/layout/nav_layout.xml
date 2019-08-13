@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -16,8 +17,8 @@
 
     <com.rishabhharit.roundedimageview.RoundedImageView
         android:id="@+id/avatar"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="@dimen/button_height"
+        android:layout_height="@dimen/button_height"
         android:layout_marginStart="16dp"
         android:layout_marginTop="70dp"
         android:elevation="3dp"
@@ -46,6 +47,18 @@
         android:textSize="13sp"
         app:layout_constraintStart_toStartOf="@+id/mail"
         app:layout_constraintTop_toBottomOf="@+id/mail" />
+
+    <ImageButton
+        android:id="@+id/logOut"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:contentDescription="@string/login"
+        app:layout_constraintBottom_toBottomOf="@+id/foodImageNav"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_logout" />
 
     <TextView
         android:id="@+id/selectNav"
@@ -120,5 +133,4 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/categoryNav" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

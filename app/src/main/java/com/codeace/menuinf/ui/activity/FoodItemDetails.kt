@@ -14,10 +14,10 @@ class FoodItemDetails : AppCompatActivity() {
         setContentView(R.layout.item_details)
 
         val foodData: FoodData = intent.extras!!.get("extra_object") as FoodData
-        setImage(this, foodData.image, foodImage)
-        itemName_.text = foodData.name
-        itemCategory_.text = foodData.category
-        itemSpiciness_.text = foodData.spiciness
-        itemPrice_.text = foodData.price.toString()
+        setImage(this, foodData.food_image, foodImage)
+        itemName_.text = foodData.food_name
+        itemCategory_.text = foodData.food_category
+        itemSpiciness_.text = foodData.food_spiciness
+        itemPrice_.text = foodData.food_price.toString()
     }
 }

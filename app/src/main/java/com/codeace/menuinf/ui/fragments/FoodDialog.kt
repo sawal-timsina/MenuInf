@@ -14,10 +14,10 @@ import android.widget.ImageView
 import androidx.fragment.app.DialogFragment
 import com.codeace.menuinf.R
 import com.codeace.menuinf.foodData.FoodData
+import com.codeace.menuinf.helpers.imagePickCode
 import com.codeace.menuinf.helpers.setImage
 
 class FoodDialog : DialogFragment() {
-    private val imagePickCode = 1000
     private var foodData: FoodData? = null
     private lateinit var listener: FoodDialogListener
     private lateinit var foodImage: ImageView
@@ -61,11 +61,11 @@ class FoodDialog : DialogFragment() {
             if (foodData == null) foodData =
                 FoodData(tag!!.toInt(), "", "", "", "", 0.0)
             if (foodData != null) {
-                setImage(activity!!, foodData!!.image, foodImage)
-                editItemName.text = getEditableText(foodData!!.name)
-                editItemCategory.text = getEditableText(foodData!!.category)
-                editItemSpiciness.text = getEditableText(foodData!!.spiciness)
-                editItemPrice.text = getEditableText(foodData!!.price.toString())
+                setImage(activity!!, foodData!!.food_image, foodImage)
+                editItemName.text = getEditableText(foodData!!.food_name)
+                editItemCategory.text = getEditableText(foodData!!.food_category)
+                editItemSpiciness.text = getEditableText(foodData!!.food_spiciness)
+                editItemPrice.text = getEditableText(foodData!!.food_price.toString())
             }
         }
 
@@ -82,10 +82,10 @@ class FoodDialog : DialogFragment() {
                 editItemSpiciness.text.isEmpty() -> editItemSpiciness.error = resources.getString(R.string.field_error)
                 editItemPrice.text.isEmpty() -> editItemPrice.error = resources.getString(R.string.field_error)
                 else -> {
-                    foodData!!.name = editItemName.text.toString()
-                    foodData!!.category = editItemCategory.text.toString()
-                    foodData!!.spiciness = editItemSpiciness.text.toString()
-                    foodData!!.price = editItemPrice.text.toString().toDouble()
+                    foodData!!.food_name = editItemName.text.toString()
+                    foodData!!.food_category = editItemCategory.text.toString()
+                    foodData!!.food_spiciness = editItemSpiciness.text.toString()
+                    foodData!!.food_price = editItemPrice.text.toString().toDouble()
                     listener.onDialogPositiveClick(this, foodData!!)
                     dialog.dismiss()
                 }
@@ -98,18 +98,11 @@ class FoodDialog : DialogFragment() {
         return dialogView
     }
 
-//    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-//        val dialogView = LayoutInflater.from(activity!!).inflate(R.layout.dialog_layout, null)
-//
-//
-//        return builder.create()
-//    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == imagePickCode) {
-            foodData!!.image = data?.data.toString()
-            setImage(activity!!, foodData!!.image, foodImage)
+            foodData!!.food_image = data?.data.toString()
+            setImage(activity!!, foodData!!.food_image, foodImage)
         }
     }
 

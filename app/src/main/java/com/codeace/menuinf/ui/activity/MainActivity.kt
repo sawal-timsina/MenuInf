@@ -1,8 +1,9 @@
-package com.codeace.menuinf
+package com.codeace.menuinf.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
 import android.transition.Explode
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -16,32 +17,33 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.codeace.menuinf.R
 import com.codeace.menuinf.adapters.FoodAdapter
 import com.codeace.menuinf.dataHolders.FoodViewModel
 import com.codeace.menuinf.foodData.FoodData
 import com.codeace.menuinf.helpers.setImage
-import com.codeace.menuinf.ui.activity.FoodItemDetails
 import com.codeace.menuinf.ui.fragments.FoodDialog
-import com.codeace.menuinf.ui.fragments.LoginDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.innovattic.rangeseekbar.RangeSeekBar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_layout.*
 import kotlinx.android.synthetic.main.nav_layout.*
+import kotlinx.android.synthetic.main.toolbar.*
 import java.io.Serializable
 
 class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
-    RangeSeekBar.SeekBarChangeListener, LoginDialog.UserListener {
+    RangeSeekBar.SeekBarChangeListener {
 
     private lateinit var mAuth: FirebaseAuth
-    private lateinit var foodVM: FoodViewModel
+    private var foodVM: FoodViewModel? = null
     private var foodAdapter = FoodAdapter(
         { pos: Int, image: Pair<View, String> -> onItemClicked(pos, image) },
         { pos: Int -> onDeleteClicked(pos) },
@@ -49,6 +51,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("Status", resources.getDimensionPixelSize(resources.getIdentifier("status_bar_height", "dimen", "android")).toString())
         window.enterTransition = Explode()
         window.exitTransition = Explode()
 
@@ -56,7 +59,6 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
         setSupportActionBar(toolbar)
 
         setImage(this, "", foodImageNav, R.drawable.background)
-
         mAuth = FirebaseAuth.getInstance()
 
         itemRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -67,27 +69,6 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
         categoryList.divider = null
 
         rangeSeekBar.seekBarChangeListener = this
-
-        foodVM = ViewModelProviders.of(this, object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return FoodViewModel(application) as T
-            }
-        }).get(FoodViewModel::class.java)
-
-        foodVM.allFoodData.observe(this, Observer { foodArray ->
-            foodAdapter.submitList(foodArray as MutableList<FoodData>)
-            foodVM.getCategories().also {
-                categoryList.adapter =
-                    ArrayAdapter(
-                        this@MainActivity,
-                        R.layout.nav_header,
-                        foodVM.categoryListItems.toList()
-                    )
-                rangeSeekBar.max = foodVM._maxPrice.toInt()
-                minText.text = rangeSeekBar.getMinThumbValue().toString()
-                maxText.text = rangeSeekBar.getMaxThumbValue().toString()
-            }
-        })
 
         val toggle = ActionBarDrawerToggle(
             this,
@@ -101,44 +82,38 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
         toggle.syncState()
 
         categoryList.setOnItemClickListener { _, view, position, _ ->
-            if (foodVM.selectedCategories.contains(position)) foodVM.selectedCategories.remove(
-                position
-            )
-            else foodVM.selectedCategories.add(position)
+            if (foodVM?.selectedCategories!!.contains(position)) foodVM?.selectedCategories?.remove(position)
+            else foodVM?.selectedCategories!!.add(position)
 
             view.background = resources.getDrawable(
-                if (foodVM.selectedCategories.contains(position)) R.drawable.selected else R.drawable.dselected,
+                if (foodVM?.selectedCategories!!.contains(position)) R.drawable.selected else R.drawable.dselected,
                 null
             )
 
-            foodVM.setFoodDataList(
-                foodVM.filterByData(
-                    rangeSeekBar.getMinThumbValue().toDouble(),
-                    rangeSeekBar.getMaxThumbValue().toDouble()
-                )
-            )
-
+            foodVM?.setFoodDataList(foodVM?.filterByData(rangeSeekBar.getMinThumbValue().toDouble(), rangeSeekBar.getMaxThumbValue().toDouble())!!)
             drawer_layout.closeDrawer(GravityCompat.START)
         }
+
+        logOut.setOnClickListener {
+            drawer_layout.closeDrawer(GravityCompat.START)
+            mAuth.signOut()
+            drawer_layout.addDrawerListener(object : DrawerLayout.DrawerListener {
+                override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
+                override fun onDrawerOpened(drawerView: View) {}
+                override fun onDrawerClosed(drawerView: View) {
+                    getUser()
+                }
+                override fun onDrawerStateChanged(newState: Int) {
+
+                }
+            })
+        }
+
     }
 
-    public override fun onStart() {
+    override fun onStart() {
         super.onStart()
-        // Check if user is signed in (non-null) and update UI accordingly.
-        val currentUser = mAuth.currentUser
-        foodAdapter.visibility = false
-        floatingActionButton.isVisible = false
-        avatar.isVisible = false
-
-        if (currentUser == null) {
-            val userDialog = LoginDialog()
-            userDialog.loginAuth = mAuth
-            userDialog.show(supportFragmentManager, resources.getString(R.string.login))
-
-            Toast.makeText(this, "Please Login/SignUp to use the app", Toast.LENGTH_LONG).show()
-        } else {
-            updateUi(currentUser)
-        }
+        getUser()
     }
 
     override fun onBackPressed() {
@@ -147,10 +122,6 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
         } else {
             super.onBackPressed()
         }
-    }
-
-    override fun onLoginSuccess(currentUser: FirebaseUser?) {
-        updateUi(currentUser)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -162,11 +133,11 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
             }
 
             override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                foodVM.setFoodDataList(
-                    foodVM.filterByData(
+                foodVM?.setFoodDataList(
+                    foodVM?.filterByData(
                         rangeSeekBar.getMinThumbValue().toDouble(),
                         rangeSeekBar.getMaxThumbValue().toDouble()
-                    )
+                    )!!
                 )
                 return true
             }
@@ -177,12 +148,12 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {
                 if (newText.isNotEmpty()) {
-                    val listItems = foodVM.allFoodData.value!!.filter { s ->
-                        s.name.contains(newText, true)
+                    val listItems = foodVM?.getAllFoodData()?.value!!.filter { s ->
+                        s.food_name.contains(newText, true)
                     }
-                    foodVM.setFoodDataList(listItems)
+                    foodVM?.setFoodDataList(listItems)
                 } else {
-                    foodVM.setDefaults()
+                    foodVM?.setDefaults()
                 }
                 return true
             }
@@ -196,9 +167,9 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
 
     override fun onDialogPositiveClick(dialog: DialogFragment, foodData: FoodData) {
         if (dialog.tag.equals(getString(R.string.fda))) {
-            foodVM.insert(foodData)
+            foodVM?.insert(foodData)
         } else {
-            foodVM.update(foodData)
+            foodVM?.update(foodData)
         }
     }
 
@@ -209,16 +180,56 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
     override fun onValueChanged(minThumbValue: Int, maxThumbValue: Int) {
         minText.text = "$minThumbValue"
         maxText.text = "$maxThumbValue"
-        foodAdapter.submitList(
-            foodVM.filterByData(
+        foodVM?.setFoodDataList(
+            foodVM?.filterByData(
                 minThumbValue.toDouble(),
                 maxThumbValue.toDouble()
-            )
+            )!!
         )
     }
 
+    private fun getUser() {
+        foodAdapter.visibility = false
+        floatingActionButton.isVisible = false
+        avatar.isVisible = false
+        setImage(this, "", avatar)
+        mail.text = ""
+        position.text = ""
+
+        if (mAuth.currentUser == null) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            Toast.makeText(this, "Please Login/SignUp to use the app", Toast.LENGTH_LONG).show()
+        } else {
+            updateUi(mAuth.currentUser)
+        }
+    }
+
+    private fun initViewModel(){
+        foodVM = ViewModelProviders.of(this, object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return FoodViewModel(application) as T
+            }
+        }).get(FoodViewModel::class.java)
+
+        foodVM?.getAllFoodData()!!.observe(this, Observer { foodArray ->
+            foodAdapter.submitList(foodArray)
+            foodVM?.getCategories().also {
+                if(foodVM?.isChanged!!){
+                    categoryList.adapter = ArrayAdapter(this@MainActivity,
+                        R.layout.nav_header, foodVM?.categoryListItems!!.toList())
+
+                    rangeSeekBar.max = foodVM?._maxPrice!!.toInt()
+
+                    minText.text = rangeSeekBar.getMinThumbValue().toString()
+                    maxText.text = rangeSeekBar.getMaxThumbValue().toString()
+                    foodVM?.isChanged = false
+                }
+            }
+        })
+    }
+
     private fun updateUi(currentUser: FirebaseUser?) {
-        if (currentUser?.email == resources.getString(R.string.admin)) {
+        if (currentUser?.uid == resources.getString(R.string.admin)) {
             foodAdapter.visibility = true
             floatingActionButton.isVisible = true
             floatingActionButton.setOnClickListener {
@@ -227,18 +238,19 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
             }
 
             floatingActionButton.setOnLongClickListener {
-                foodVM.deleteAll()
+                foodVM?.deleteAll()
                 true
             }
         }
         avatar.isVisible = true
-        setImage(this, currentUser?.photoUrl.toString(), avatar)
+        setImage(this, currentUser?.photoUrl.toString(), avatar, R.drawable.ic_user)
         mail.text = currentUser?.displayName
         position.text = currentUser?.email
+        initViewModel()
     }
 
     private fun onDeleteClicked(pos: Int) {
-        foodVM.delete(foodAdapter.getDataAt(pos))
+        foodVM?.delete(foodAdapter.getDataAt(pos))
     }
 
     private fun onUpdateClicked(pos: Int) {

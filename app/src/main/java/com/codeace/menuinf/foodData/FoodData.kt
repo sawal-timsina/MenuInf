@@ -13,36 +13,36 @@ data class FoodData(
     @SerializedName("id")
     @Expose
     @PrimaryKey(autoGenerate = true)
-    val id: Int? = null,
+    var id: Int? = null,
 
     @SerializedName("food_image")
     @Expose
     @ColumnInfo(name = "food_image")
-    var image: String,
+    var food_image: String = "",
 
     @SerializedName("food_name")
     @Expose
     @ColumnInfo(name = "food_name")
-    var name: String,
+    var food_name: String = "",
 
     @SerializedName("food_category")
     @Expose
     @ColumnInfo(name = "food_category")
-    var category: String,
+    var food_category: String = "",
 
     @SerializedName("food_spiciness")
     @Expose
     @ColumnInfo(name = "food_spiciness")
-    var spiciness: String,
+    var food_spiciness: String = "",
 
     @SerializedName("food_price")
     @Expose
     @ColumnInfo(name = "food_price")
-    var price: Double
+    var food_price: Double = 0.0
 ) : Serializable {
     override fun toString(): String {
-        return ToStringBuilder(this).append("id", id).append("foodImage", image)
-            .append("foodName", name).append("foodCategory", category)
-            .append("foodSpiciness", spiciness).append("foodPrice", price).toString()
+        return ToStringBuilder(this).append("id", id).append("foodImage", food_image)
+            .append("foodName", food_name).append("foodCategory", food_category)
+            .append("foodSpiciness", food_spiciness).append("foodPrice", food_price).toString()
     }
 }

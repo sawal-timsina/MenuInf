@@ -25,13 +25,16 @@
     <string name="category">Category</string>
     <string name="filter_by">Filter By</string>
     <string name="field_error">Field Cannot be empty!!!</string>
-    <string name="login">Login</string>
+    <string name="login">Sign In</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
-    <string name="admin">t.sawal231@gmail.com</string>
+    <string name="admin">zukWguExmKUo6PP10sHmXlykWtE2</string>
     <string name="sign_up">Sign Up</string>
     <string name="conform_password">Conform Password</string>
     <string name="full_name">Full Name</string>
     <string name="error_email">Invalid Email!!</string>
     <string name="pass_not_match">Password Doesn\'t Match!!</string>
+    <string name="forgot_password"><u>Forgot Password?</u></string>
+    <string name="already_have_an_account">Have account! <u>Sign In</u></string>
+    <string name="don_t_have_an_account_sign_up">Don\'t have an account? <u>Sign Up</u></string>
 </resources>

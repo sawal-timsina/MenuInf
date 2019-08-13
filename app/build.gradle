@@ -41,7 +41,8 @@ dependencies {
 
 //  Glide
     implementation 'com.github.bumptech.glide:glide:4.9.0'
-    implementation 'com.google.firebase:firebase-database:16.0.4'
+    implementation 'com.google.firebase:firebase-database:18.0.1'
+    implementation 'com.google.firebase:firebase-storage:18.1.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 
 //  Range Slide Bar and circular imageview

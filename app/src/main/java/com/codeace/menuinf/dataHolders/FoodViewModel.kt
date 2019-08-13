@@ -3,7 +3,6 @@ package com.codeace.menuinf.dataHolders
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.codeace.menuinf.foodData.FoodData
 
 class FoodViewModel(application: Application) : AndroidViewModel(application) {
@@ -11,34 +10,32 @@ class FoodViewModel(application: Application) : AndroidViewModel(application) {
     private val foodRepository: FoodRepository =
         FoodRepository(application)
 
-    internal var allFoodData: LiveData<List<FoodData>>
-
     internal val categoryListItems = mutableSetOf<String>()
 
     internal val selectedCategories = mutableListOf<Int>()
 
     internal var _maxPrice: Double = 0.0
 
-    init {
-        allFoodData = foodRepository.allFoodData
-    }
+    internal var isChanged: Boolean = true
 
     fun setFoodDataList(foodData: List<FoodData>) {
-        val data : MutableLiveData<List<FoodData>> = MutableLiveData()
-        data.value = foodData
-        allFoodData = data
+        foodRepository.setFoodDataList(foodData)
     }
 
     fun setDefaults() {
-        allFoodData = foodRepository.allFoodData
+        foodRepository.setDefault()
+    }
+
+    fun getAllFoodData(): LiveData<List<FoodData>>{
+        return foodRepository.allFoodData
     }
 
     fun getCategories() {
         categoryListItems.clear()
         _maxPrice = 0.0
-        allFoodData.value?.forEach {
-            categoryListItems.add(it.category)
-            _maxPrice = maxOf(_maxPrice, it.price)
+        foodRepository.getMenu().forEach {
+            categoryListItems.add(it.food_category)
+            _maxPrice = maxOf(_maxPrice, it.food_price)
         }
     }
 
@@ -47,35 +44,40 @@ class FoodViewModel(application: Application) : AndroidViewModel(application) {
 
         if (!selectedCategories.isNullOrEmpty()) {
             selectedCategories.forEach {
-                allFoodData.value?.filter { s -> s.category == categoryListItems.toList()[it] && s.price in minPrice..maxPrice }
-                    ?.forEach {
+                foodRepository.getMenu().filter { s -> s.food_category == categoryListItems.toList()[it] && s.food_price in minPrice..maxPrice }
+                    .forEach {
                         listItem.add(it)
                     }
             }
         } else {
-            allFoodData.value?.filter { s -> s.price in minPrice..maxPrice }
-                ?.forEach {
-                    listItem.add(it)
-                }
+            foodRepository.getMenu().filter { s -> s.food_price in minPrice..maxPrice }.forEach {
+                listItem.add(it)
+            }
         }
 
-        return if (listItem.isNullOrEmpty()) allFoodData.value!! else listItem
+        return if (listItem.isNullOrEmpty())
+            foodRepository.allFoodData.value!!
+        else
+            listItem
     }
-
 
     fun insert(foodData: FoodData) {
         foodRepository.insert(foodData)
+        isChanged = true
     }
 
     fun update(foodData: FoodData) {
         foodRepository.update(foodData)
+        isChanged = true
     }
 
     fun delete(foodData: FoodData) {
         foodRepository.delete(foodData)
+        isChanged = true
     }
 
     fun deleteAll() {
         foodRepository.deleteAll()
+        isChanged = true
     }
 }
