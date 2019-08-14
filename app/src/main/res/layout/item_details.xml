@@ -1,116 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/foodParent"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:transitionName="food_parent"
-        app:cardCornerRadius="0dp"
-        app:cardElevation="3dp">
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/foodParent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:transitionName="food_parent"
+    app:cardCornerRadius="0dp"
+    app:cardElevation="3dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         tools:context=".ui.activity.FoodItemDetails">
 
         <ImageView
-                android:id="@+id/foodImage"
-                android:layout_width="0dp"
-                android:layout_height="200dp"
-                android:contentDescription="@string/app_name"
-                android:scaleType="centerCrop"
-                android:transitionName="FoodImage"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-        />
+            android:id="@+id/foodImage"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:contentDescription="@string/food_name"
+            android:scaleType="centerCrop"
+            android:transitionName="FoodImage"
+            app:layout_constraintBottom_toTopOf="@id/itemName"
+            app:layout_constraintDimensionRatio="H,16:9"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
-                android:id="@+id/itemName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="24dp"
-                android:text="@string/food_name"
-                android:textSize="16sp"
-                android:textColor="@color/primaryText"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/foodImage"/>
+            android:id="@+id/itemName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/food_name"
+            android:textColor="@color/primaryText"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/foodImage" />
 
         <TextView
-                android:id="@+id/itemName_"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:hint="@string/item_name"
-                android:transitionName="FoodName"
-                app:layout_constraintStart_toEndOf="@+id/itemName"
-                app:layout_constraintTop_toTopOf="@+id/itemName"/>
+            android:id="@+id/itemName_"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:hint="@string/item_name"
+            android:transitionName="FoodName"
+            app:layout_constraintStart_toEndOf="@+id/itemName"
+            app:layout_constraintTop_toTopOf="@+id/itemName" />
 
         <TextView
-                android:id="@+id/itemCategory"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="24dp"
-                android:text="@string/category"
-                android:textColor="@color/primaryText"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/itemName_"/>
+            android:id="@+id/itemCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/category"
+            android:textColor="@color/primaryText"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemName_" />
 
         <TextView
-                android:id="@+id/itemCategory_"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:hint="@string/category"
-                app:layout_constraintStart_toEndOf="@+id/itemName"
-                app:layout_constraintTop_toTopOf="@+id/itemCategory"/>
+            android:id="@+id/itemCategory_"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:hint="@string/category"
+            app:layout_constraintStart_toEndOf="@+id/itemName"
+            app:layout_constraintTop_toTopOf="@+id/itemCategory" />
 
         <TextView
-                android:id="@+id/itemSpiciness"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:text="@string/spiciness"
-                android:layout_marginTop="24dp"
-                android:textColor="@color/primaryText"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/itemCategory_"/>
+            android:id="@+id/itemSpiciness"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/spiciness"
+            android:textColor="@color/primaryText"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemCategory_" />
 
         <TextView
-                android:id="@+id/itemSpiciness_"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:hint="@string/spiciness"
-                app:layout_constraintStart_toEndOf="@+id/itemName"
-                app:layout_constraintTop_toTopOf="@+id/itemSpiciness"/>
+            android:id="@+id/itemSpiciness_"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:hint="@string/spiciness"
+            app:layout_constraintStart_toEndOf="@+id/itemName"
+            app:layout_constraintTop_toTopOf="@+id/itemSpiciness" />
 
         <TextView
-                android:id="@+id/itemPrice"
-                android:layout_marginStart="32dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="@string/price"
-                android:textColor="@color/primaryText"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/itemSpiciness_"/>
+            android:id="@+id/itemPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/price"
+            android:textColor="@color/primaryText"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemSpiciness_" />
 
         <TextView
-                android:id="@+id/itemPrice_"
-                android:layout_marginStart="32dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="@string/price"
-                android:transitionName="FoodPrice"
-                app:layout_constraintStart_toEndOf="@+id/itemName"
-                app:layout_constraintTop_toTopOf="@+id/itemPrice"/>
+            android:id="@+id/itemPrice_"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:hint="@string/price"
+            android:transitionName="FoodPrice"
+            app:layout_constraintStart_toEndOf="@+id/itemName"
+            app:layout_constraintTop_toTopOf="@+id/itemPrice" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

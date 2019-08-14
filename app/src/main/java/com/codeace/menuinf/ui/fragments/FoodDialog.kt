@@ -87,12 +87,12 @@ class FoodDialog : DialogFragment() {
                     foodData!!.food_spiciness = editItemSpiciness.text.toString()
                     foodData!!.food_price = editItemPrice.text.toString().toDouble()
                     listener.onDialogPositiveClick(this, foodData!!)
-                    dialog.dismiss()
+                    dialog?.dismiss()
                 }
             }
         }
         dialogView.findViewById<Button>(R.id.dialogCancel).setOnClickListener {
-            dialog.dismiss()
+            dialog?.dismiss()
         }
 
         return dialogView

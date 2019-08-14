@@ -41,8 +41,8 @@ class FoodAdapter(
             deleteListener: (Int) -> Unit, updateListener: (Int) -> Unit
         ) {
             setImage(itemView.context, foodData.food_image, itemView.iFoodImage)
-            itemView.iFoodName.text = foodData.food_name
-            itemView.iFoodPrice.text = foodData.food_price.toString().plus(" Rs")
+            itemView.iFoodName.text =
+                "![CDATA[${foodData.food_name}<br />${foodData.food_price.toString().plus(" Rs")}]]"
             itemView.setOnClickListener {
                 clickListener(adapterPosition, Pair.create(itemView.iFoodImage, "FoodImage"))
             }
