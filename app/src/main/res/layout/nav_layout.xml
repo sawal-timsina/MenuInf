@@ -10,6 +10,7 @@
         android:layout_width="0dp"
         android:layout_height="200dp"
         android:contentDescription="@string/app_name"
+        android:background="@drawable/gradient_background"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,34 +20,34 @@
         android:id="@+id/avatar"
         android:layout_width="@dimen/button_height"
         android:layout_height="@dimen/button_height"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="70dp"
+        android:layout_marginStart="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_margin"
         android:elevation="3dp"
         android:scaleType="centerCrop"
         app:cornerRadius="30dp"
+        app:layout_constraintBottom_toTopOf="@id/mail"
         app:layout_constraintStart_toStartOf="@+id/foodImageNav"
-        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/imageplaceholder" />
 
     <TextView
         android:id="@+id/mail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"
         android:textColor="@android:color/white"
         android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="@+id/avatar"
-        app:layout_constraintTop_toBottomOf="@+id/avatar" />
+        app:layout_constraintBottom_toTopOf="@id/position"
+        app:layout_constraintStart_toStartOf="@id/avatar" />
 
     <TextView
         android:id="@+id/position"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginBottom="@dimen/fab_margin"
         android:textColor="#C5CAE9"
         android:textSize="13sp"
-        app:layout_constraintStart_toStartOf="@+id/mail"
-        app:layout_constraintTop_toBottomOf="@+id/mail" />
+        app:layout_constraintBottom_toBottomOf="@id/foodImageNav"
+        app:layout_constraintStart_toStartOf="@id/mail" />
 
     <ImageButton
         android:id="@+id/logOut"
@@ -54,9 +55,9 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="@dimen/fab_margin"
         android:contentDescription="@string/login"
-        app:layout_constraintBottom_toBottomOf="@+id/foodImageNav"
+        app:layout_constraintBottom_toTopOf="@id/position"
+        app:layout_constraintTop_toBottomOf="@id/mail"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_logout" />
 
@@ -64,8 +65,8 @@
         android:id="@+id/selectNav"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="@dimen/fab_margin"
+        android:layout_marginTop="@dimen/fab_margin"
         android:text="@string/filter_by"
         android:textColor="@color/primaryText"
         android:textSize="16sp"
@@ -76,7 +77,6 @@
         android:id="@+id/priceNav"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:padding="16dp"
         android:text="@string/price"
         android:textAppearance="@style/NavListText"

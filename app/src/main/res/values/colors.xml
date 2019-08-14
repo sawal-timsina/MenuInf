@@ -12,9 +12,9 @@
     <color name="button_color">#3380E5</color>
 
     <color name="color_primary">#2196F3</color>
-    <color name="color_primary_variant">#1976D2</color>
+    <color name="color_primary_variant">#662196F3</color>
     <color name="color_secondary">#E91E63</color>
-    <color name="color_secondary_variant">#C2185B</color>
+    <color name="color_secondary_variant">#66E91E63</color>
 
     <!--colorBackground appears behind scrollable content and is used for the default window-->
     <!--background. colorSurface is mapped to the surface of components such as cards, sheets-->

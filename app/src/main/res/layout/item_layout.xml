@@ -29,7 +29,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/iFoodName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -45,12 +45,16 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/optionButton"
-            style="@style/Widget.MaterialComponents.Button.Icon"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+            android:layout_width="40dp"
+            android:layout_height="50dp"
             android:layout_gravity="center"
-            android:inputType="textMultiLine"
+            app:backgroundTint="@android:color/transparent"
+            app:cornerRadius="25dp"
+            app:iconPadding="0dp"
+            app:iconTint="@color/primaryText"
             app:icon="@drawable/ic_more_vert_black_24dp"
+            app:rippleColor="@color/color_secondary_variant"
             app:iconGravity="textStart"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/iFoodName"

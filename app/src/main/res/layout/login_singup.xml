@@ -218,6 +218,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/secondaryText"
         android:textSize="18sp"
+        app:rippleColor="@color/color_secondary_variant"
         app:layout_constraintBottom_toTopOf="@id/signUpButton"
         app:layout_constraintEnd_toEndOf="@id/viewBottom"
         app:layout_constraintStart_toStartOf="@id/viewBottom" />
@@ -232,6 +233,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/colorAccent"
         android:textSize="18sp"
+        app:rippleColor="@color/color_secondary_variant"
         app:layout_constraintBottom_toBottomOf="@id/viewBottom"
         app:layout_constraintEnd_toEndOf="@id/viewBottom"
         app:layout_constraintStart_toStartOf="@id/viewBottom" />
