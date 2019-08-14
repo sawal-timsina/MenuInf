@@ -8,7 +8,7 @@ import com.codeace.menuinf.foodData.FoodData
 class FoodViewModel(application: Application) : AndroidViewModel(application) {
 
     private val foodRepository: FoodRepository =
-        FoodRepository(application)
+        FoodRepository()
 
     internal val categoryListItems = mutableSetOf<String>()
 

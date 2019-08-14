@@ -268,6 +268,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun startMainActivity() {
         startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
     private fun showMessage(message: String) {

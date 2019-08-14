@@ -120,7 +120,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
         } else {
-            super.onBackPressed()
+            finish()
         }
     }
 
@@ -199,6 +199,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
         if (mAuth.currentUser == null) {
             startActivity(Intent(this, LoginActivity::class.java))
             Toast.makeText(this, "Please Login/SignUp to use the app", Toast.LENGTH_LONG).show()
+            finish()
         } else {
             updateUi(mAuth.currentUser)
         }
@@ -251,6 +252,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
 
     private fun onDeleteClicked(pos: Int) {
         foodVM?.delete(foodAdapter.getDataAt(pos))
+        foodAdapter.notifyItemRemoved(pos)
     }
 
     private fun onUpdateClicked(pos: Int) {
