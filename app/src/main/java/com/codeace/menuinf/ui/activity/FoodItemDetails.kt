@@ -3,7 +3,7 @@ package com.codeace.menuinf.ui.activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.codeace.menuinf.R
-import com.codeace.menuinf.foodData.FoodData
+import com.codeace.menuinf.entity.FoodData
 import com.codeace.menuinf.helpers.setImage
 import kotlinx.android.synthetic.main.item_details.*
 

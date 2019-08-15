@@ -1,7 +1,8 @@
-package com.codeace.menuinf.foodData
+package com.codeace.menuinf.db
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.codeace.menuinf.entity.FoodData
 
 @Dao
 interface FoodDataDao {

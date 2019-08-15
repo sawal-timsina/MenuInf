@@ -9,13 +9,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.codeace.menuinf.R
-import com.codeace.menuinf.foodData.FoodData
+import com.codeace.menuinf.entity.FoodData
 import com.codeace.menuinf.helpers.setImage
 import kotlinx.android.synthetic.main.item_layout.view.*
 
 
 class FoodAdapter(
-    private val clickListener: (Int, Pair<View, String>) -> Unit, private val deleteListener: (Int) -> Unit,
+    private val clickListener: (Int, Pair<View, String>) -> Unit,
+    private val deleteListener: (Int) -> Unit,
     private val updateListener: (Int) -> Unit
 ) : ListAdapter<FoodData, FoodAdapter.ViewHolder>(
     DIFF_CALLBACK

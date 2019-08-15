@@ -1,4 +1,4 @@
-package com.codeace.menuinf.foodData
+package com.codeace.menuinf.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

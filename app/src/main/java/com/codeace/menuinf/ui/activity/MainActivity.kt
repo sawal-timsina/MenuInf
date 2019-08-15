@@ -26,10 +26,10 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.codeace.menuinf.R
 import com.codeace.menuinf.adapters.FoodAdapter
-import com.codeace.menuinf.dataHolders.FoodViewModel
-import com.codeace.menuinf.foodData.FoodData
+import com.codeace.menuinf.entity.FoodData
 import com.codeace.menuinf.helpers.setImage
 import com.codeace.menuinf.ui.fragments.FoodDialog
+import com.codeace.menuinf.viewModel.FoodViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.innovattic.rangeseekbar.RangeSeekBar
@@ -41,7 +41,6 @@ import java.io.Serializable
 
 class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
     RangeSeekBar.SeekBarChangeListener {
-
     private lateinit var mAuth: FirebaseAuth
     private var foodVM: FoodViewModel? = null
     private var foodAdapter = FoodAdapter(
@@ -148,10 +147,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {
                 if (newText.isNotEmpty()) {
-                    val listItems = foodVM?.getAllFoodData()?.value!!.filter { s ->
-                        s.food_name.contains(newText, true)
-                    }
-                    foodVM?.setFoodDataList(listItems)
+                    foodVM?.setFoodDataList(foodVM!!.searchItem(newText))
                 } else {
                     foodVM?.setDefaults()
                 }
@@ -251,8 +247,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
     }
 
     private fun onDeleteClicked(pos: Int) {
-        foodVM?.delete(foodAdapter.getDataAt(pos))
-        foodAdapter.notifyItemRemoved(pos)
+        foodVM?.delete(foodAdapter.getDataAt(pos), pos)
     }
 
     private fun onUpdateClicked(pos: Int) {

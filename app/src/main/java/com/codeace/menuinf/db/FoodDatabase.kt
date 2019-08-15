@@ -1,9 +1,10 @@
-package com.codeace.menuinf.foodData
+package com.codeace.menuinf.db
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.codeace.menuinf.entity.FoodData
 
 @Database(entities = [FoodData::class], version = 1)
 abstract class FoodDatabase : RoomDatabase() {

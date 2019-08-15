@@ -2,11 +2,10 @@ package com.codeace.menuinf.helpers
 
 import android.content.Context
 import android.text.TextUtils
-import android.util.Log
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.codeace.menuinf.R
-import com.codeace.menuinf.foodData.FoodData
+import com.codeace.menuinf.entity.FoodData
 import com.google.android.material.textfield.TextInputEditText
 import java.util.regex.Pattern
 
@@ -38,15 +37,12 @@ inline fun checkPassword(password : String, editText : TextInputEditText, errorM
 
 fun sort(list: MutableList<FoodData>, data: FoodData) {
     var i = list.size
-    Log.d("SortO", i.toString())
     do {
         if (i <= 0) {
             list.add(0, data)
-            Log.d("SortL", i.toString().plus(data.food_name))
             break
         } else if (list[i - 1].food_name.compareTo(data.food_name) < 1) {
             list.add(i, data)
-            Log.d("SortG", i.toString().plus("${list[i - 1].food_name} : ${data.food_name}"))
             break
         }
         i--

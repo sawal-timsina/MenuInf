@@ -13,7 +13,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.fragment.app.DialogFragment
 import com.codeace.menuinf.R
-import com.codeace.menuinf.foodData.FoodData
+import com.codeace.menuinf.entity.FoodData
 import com.codeace.menuinf.helpers.imagePickCode
 import com.codeace.menuinf.helpers.setImage
 

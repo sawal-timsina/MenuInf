@@ -1,4 +1,4 @@
-package com.codeace.menuinf.foodData
+package com.codeace.menuinf.entity
 
 import com.google.firebase.database.IgnoreExtraProperties
 
