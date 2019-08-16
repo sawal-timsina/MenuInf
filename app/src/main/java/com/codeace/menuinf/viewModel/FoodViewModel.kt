@@ -4,6 +4,7 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import com.codeace.menuinf.entity.FoodData
+import com.codeace.menuinf.helpers.showMessage
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.FirebaseDatabase
@@ -14,14 +15,14 @@ class FoodViewModel(application: Application) : AndroidViewModel(application) {
     private val HOT_STOCK_REF = FirebaseDatabase.getInstance().reference.child("foodData")
     private val foodImageStorage = FirebaseStorage.getInstance().reference
 
-    internal var menu: MutableList<FoodData> = mutableListOf()
+    private var menu: MutableList<FoodData> = mutableListOf()
 
     internal val selectedCategories = mutableListOf<Int>()
     internal val categoryListItems = mutableSetOf<String>()
 
     private val liveData = FireBaseLiveData { menu = it.toMutableList() }
 
-    internal var _maxPrice: Double = 0.0
+    internal var maxPrice: Double = 0.0
     internal var isChanged: Boolean = true
 
     init {
@@ -43,7 +44,7 @@ class FoodViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun clearItems() {
         categoryListItems.clear()
-        _maxPrice = 0.0
+        maxPrice = 0.0
     }
 
     fun searchItem(text: String): List<FoodData> {
@@ -56,7 +57,7 @@ class FoodViewModel(application: Application) : AndroidViewModel(application) {
         clearItems()
         list.forEach {
             categoryListItems.add(it.food_category)
-            _maxPrice = maxOf(_maxPrice, it.food_price)
+            maxPrice = maxOf(maxPrice, it.food_price)
         }
     }
 
@@ -99,8 +100,8 @@ class FoodViewModel(application: Application) : AndroidViewModel(application) {
             .addOnSuccessListener {
                 liveData.delete(foodData)
             }.addOnFailureListener {
+                showMessage(getApplication(), it.localizedMessage.toString())
             }
-
         isChanged = true
     }
 
@@ -126,6 +127,10 @@ class FoodViewModel(application: Application) : AndroidViewModel(application) {
                         data.food_image = taskSnapshot.result.toString()
                         liveData.insert(data)
                     } else {
+                        showMessage(
+                            getApplication(),
+                            taskSnapshot.exception?.localizedMessage.toString()
+                        )
                     }
                 }
         }

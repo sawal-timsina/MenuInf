@@ -174,6 +174,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
             foodVM?.insert(foodData)
         } else {
             foodVM?.update(foodData)
+            foodAdapter.notifyDataSetChanged()
         }
     }
 
@@ -228,7 +229,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
                 this@MainActivity,
                 R.layout.nav_header, foodVM?.categoryListItems!!.toList()
             )
-            rangeSeekBar.max = foodVM?._maxPrice!!.toInt()
+            rangeSeekBar.max = foodVM?.maxPrice!!.toInt()
 
             minText.text = rangeSeekBar.getMinThumbValue().toString()
             maxText.text = rangeSeekBar.getMaxThumbValue().toString()
