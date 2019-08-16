@@ -88,13 +88,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
                 if (foodVM?.selectedCategories!!.contains(position)) R.drawable.selected else R.drawable.dselected,
                 null
             )
-
-            foodAdapter.submitList(
-                foodVM?.filterByData(
-                    rangeSeekBar.getMinThumbValue().toDouble(),
-                    rangeSeekBar.getMaxThumbValue().toDouble()
-                )!!
-            )
+            filterItems()
             drawer_layout.closeDrawer(GravityCompat.START)
         }
 
@@ -107,7 +101,6 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
                 override fun onDrawerClosed(drawerView: View) {
                     getUser()
                 }
-
                 override fun onDrawerStateChanged(newState: Int) {
 
                 }
@@ -138,12 +131,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
             }
 
             override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                foodAdapter.submitList(
-                    foodVM?.filterByData(
-                        rangeSeekBar.getMinThumbValue().toDouble(),
-                        rangeSeekBar.getMaxThumbValue().toDouble()
-                    )
-                )
+                filterItems()
                 return true
             }
         })
@@ -152,19 +140,33 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
         searchView.queryHint = getString(R.string.action_search)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {
-                if (newText.isNotEmpty()) {
-                    foodAdapter.submitList(foodVM!!.searchItem(newText))
-                } else {
-                    foodAdapter.submitList(foodVM!!.menu)
-                }
+                searchItems(newText)
                 return true
             }
 
-            override fun onQueryTextSubmit(query: String): Boolean {
-                return false
+            override fun onQueryTextSubmit(newText: String): Boolean {
+                searchItems(newText)
+                return true
             }
         })
         return true
+    }
+
+    private fun filterItems() {
+        foodVM?.setLiveData(
+            foodVM?.filterByData(
+                rangeSeekBar.getMinThumbValue().toDouble(),
+                rangeSeekBar.getMaxThumbValue().toDouble()
+            )!!
+        )
+    }
+
+    private fun searchItems(newText: String) {
+        if (newText.isNotEmpty()) {
+            foodVM?.setLiveData(foodVM!!.searchItem(newText))
+        } else {
+            foodVM?.setDefault()
+        }
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment, foodData: FoodData) {
@@ -182,12 +184,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
     override fun onValueChanged(minThumbValue: Int, maxThumbValue: Int) {
         minText.text = "$minThumbValue"
         maxText.text = "$maxThumbValue"
-        foodAdapter.submitList(
-            foodVM?.filterByData(
-                minThumbValue.toDouble(),
-                maxThumbValue.toDouble()
-            )
-        )
+        filterItems()
     }
 
     private fun getUser() {
@@ -214,25 +211,29 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
             }
         }).get(FoodViewModel::class.java)
 
-        foodVM?.getLiveData()!!.observe(this, Observer { dataSnapshot ->
-            if (dataSnapshot != null) {
-                foodVM!!.clearItems()
-                dataSnapshot.forEach {
-                    foodVM!!.getCategories(it)
-                }
-                foodAdapter.submitList(dataSnapshot)
-
-                if (foodVM?.isChanged!!) {
-                    categoryList.adapter = ArrayAdapter(this@MainActivity,
-                        R.layout.nav_header, foodVM?.categoryListItems!!.toList())
-                    rangeSeekBar.max = foodVM?._maxPrice!!.toInt()
-
-                    minText.text = rangeSeekBar.getMinThumbValue().toString()
-                    maxText.text = rangeSeekBar.getMaxThumbValue().toString()
-                    foodVM?.isChanged = false
-                }
-            }
+        foodVM?.getLiveData()!!.observe(this, Observer { foodList ->
+            foodAdapter.submitList(foodList)
+            initCategory()
         })
+    }
+
+    private fun initCategory() {
+        if (foodAdapter.currentList.size != 0) {
+            loading.visibility = View.GONE
+            loadingTextView.visibility = View.GONE
+        }
+        if (foodVM?.isChanged!!) {
+            foodVM?.getCategories(foodAdapter.currentList)
+            categoryList.adapter = ArrayAdapter(
+                this@MainActivity,
+                R.layout.nav_header, foodVM?.categoryListItems!!.toList()
+            )
+            rangeSeekBar.max = foodVM?._maxPrice!!.toInt()
+
+            minText.text = rangeSeekBar.getMinThumbValue().toString()
+            maxText.text = rangeSeekBar.getMaxThumbValue().toString()
+            foodVM?.isChanged = false
+        }
     }
 
     private fun updateUi(currentUser: FirebaseUser?) {

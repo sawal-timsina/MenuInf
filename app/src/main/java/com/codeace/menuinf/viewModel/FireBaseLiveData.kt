@@ -9,28 +9,25 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 
-class FireBaseLiveData(ref: DatabaseReference) : LiveData<List<FoodData>>() {
+class FireBaseLiveData(private val func: (List<FoodData>) -> Unit) : LiveData<List<FoodData>>() {
     private val LOG_TAG = "FirebaseQueryLiveData"
-    private val query: DatabaseReference = ref
+    var query: DatabaseReference? = null
     private val listener = MyValueEventListener()
 
-    override fun onActive() {
-        Log.d(LOG_TAG, "onActive")
-        query.addValueEventListener(listener)
-    }
-
-    override fun onInactive() {
-        Log.d(LOG_TAG, "onInactive")
-        query.removeEventListener(listener)
+    fun setListener() {
+        query!!.addValueEventListener(listener)
     }
 
     fun insert(foodData: FoodData) {
-        query.child(foodData.id.toString()).setValue(foodData)
-        Log.d(LOG_TAG, "data Inserted")
+        query!!.child(foodData.id.toString()).setValue(foodData)
     }
 
     fun delete(foodData: FoodData) {
-        query.child(foodData.id.toString()).removeValue()
+        query!!.child(foodData.id.toString()).removeValue()
+    }
+
+    public override fun setValue(value: List<FoodData>?) {
+        super.setValue(value)
     }
 
     private inner class MyValueEventListener : ValueEventListener {
@@ -40,7 +37,7 @@ class FireBaseLiveData(ref: DatabaseReference) : LiveData<List<FoodData>>() {
                 sort(list, it.getValue(FoodData::class.java)!!)
             }
             value = list
-            Log.d(LOG_TAG, "data Changed")
+            func(list)
         }
 
         override fun onCancelled(databaseError: DatabaseError) {

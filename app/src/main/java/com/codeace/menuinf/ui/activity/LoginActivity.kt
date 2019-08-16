@@ -1,22 +1,20 @@
 package com.codeace.menuinf.ui.activity
 
 import android.app.Activity
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
 import com.codeace.menuinf.R
 import com.codeace.menuinf.helpers.checkMail
 import com.codeace.menuinf.helpers.checkPassword
 import com.codeace.menuinf.helpers.imagePickCode
+import com.codeace.menuinf.helpers.showMessage
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
@@ -36,6 +34,8 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+
+
         if (loginAuth.currentUser != null) {
             startMainActivity()
         }
@@ -61,41 +61,41 @@ class LoginActivity : AppCompatActivity() {
         loginFragment()
         slButton.setOnClickListener {
             checkMail(
-                    emailEditText.text.toString(),
-                    emailEditText,
-                    resources.getString(R.string.error_email)
+                emailEditText.text.toString(),
+                emailEditText,
+                resources.getString(R.string.error_email)
             ) {
                 checkPassword(
-                        passwordEditText.text.toString(),
-                        passwordEditText,
-                        resources.getString(R.string.field_error)
+                    passwordEditText.text.toString(),
+                    passwordEditText,
+                    resources.getString(R.string.field_error)
                 ) {
                     if (currentFragment == 0) {
                         progressBar.visibility = View.VISIBLE
                         login(emailEditText.text.toString(), passwordEditText.text.toString())
                     } else {
                         checkPassword(
-                                passwordEditTextC.text.toString(),
-                                passwordEditTextC,
-                                resources.getString(R.string.field_error)
+                            passwordEditTextC.text.toString(),
+                            passwordEditTextC,
+                            resources.getString(R.string.field_error)
                         ) {
                             if (passwordEditText.text.toString() == passwordEditTextC.text.toString()) {
                                 if (fullNameEditText.text.toString() != "") {
                                     progressBar.visibility = View.VISIBLE
                                     signUp(
-                                            fullNameEditText.text.toString(),
-                                            emailEditText.text.toString(),
-                                            passwordEditTextC.text.toString()
+                                        fullNameEditText.text.toString(),
+                                        emailEditText.text.toString(),
+                                        passwordEditTextC.text.toString()
                                     )
                                 } else {
                                     fullNameEditText.error =
-                                            resources.getString(R.string.field_error)
+                                        resources.getString(R.string.field_error)
                                 }
                             } else {
                                 passwordEditText.error =
-                                        resources.getString(R.string.pass_not_match)
+                                    resources.getString(R.string.pass_not_match)
                                 passwordEditTextC.error =
-                                        resources.getString(R.string.pass_not_match)
+                                    resources.getString(R.string.pass_not_match)
                             }
                         }
                     }
@@ -114,25 +114,25 @@ class LoginActivity : AppCompatActivity() {
         }
         forgotPassword.setOnClickListener {
             checkMail(
-                    emailEditText.text.toString(),
-                    emailEditText,
-                    resources.getString(R.string.error_email)
+                emailEditText.text.toString(),
+                emailEditText,
+                resources.getString(R.string.error_email)
             ) {
                 loginAuth.sendPasswordResetEmail(emailEditText.text.toString())
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             Snackbar.make(
-                                    it,
-                                    "Password reset link has been sent to ${emailEditText.text.toString()} mail."
-                                    ,
-                                    Snackbar.LENGTH_LONG
+                                it,
+                                "Password reset link has been sent to ${emailEditText.text.toString()} mail."
+                                ,
+                                Snackbar.LENGTH_LONG
                             ).show()
                         } else {
                             Snackbar.make(
-                                    it,
-                                    "Password reset link has been sent to ${task.exception?.localizedMessage.toString()} mail."
-                                    ,
-                                    Snackbar.LENGTH_LONG
+                                it,
+                                "Password reset link has been sent to ${task.exception?.localizedMessage.toString()} mail."
+                                ,
+                                Snackbar.LENGTH_LONG
                             ).show()
                         }
                     }
@@ -193,14 +193,12 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithEmail:success")
                     progressBar.visibility = View.GONE
-                    showMessage("Welcome : ${loginAuth.currentUser?.displayName}")
+                    showMessage(this, "Welcome : ${loginAuth.currentUser?.displayName}")
                     startMainActivity()
                 } else {
-                    Log.d(TAG, "signInWithEmail:failure", it.exception)
                     progressBar.visibility = View.GONE
-                    showMessage(it.exception?.localizedMessage.toString())
+                    showMessage(this, it.exception?.localizedMessage.toString())
                 }
             }
     }
@@ -212,66 +210,56 @@ class LoginActivity : AppCompatActivity() {
             userAvatarStorage = storage.reference.child("userAvatar/${email.plus(".jpg")}")
         }
         loginAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener { authTask ->
-                    if (authTask.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "createUserWithEmail:success")
+            .addOnCompleteListener { authTask ->
+                if (authTask.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    if (userAvatarStorage != null) {
 
-                        if (userAvatarStorage != null) {
-
-                            userAvatarStorage.putFile(imageUri!!)
-                                    .continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
-                                        if (!task.isSuccessful) {
-                                            throw task.exception!!
-                                        }
-                                        return@Continuation userAvatarStorage.downloadUrl
-                                    })
-                                    .addOnCompleteListener { taskSnapshot ->
-                                        // Get a URL to the uploaded content
-                                        Log.d("Avatar", taskSnapshot.result.toString())
-                                        imageUri = taskSnapshot.result
-                                        signUpUser(name)
-                                    }.addOnFailureListener {
-                                        Log.d("AvatarF", it.localizedMessage.toString())
-                                    }
-
-                        } else {
-                            signUpUser(name)
-                        }
+                        userAvatarStorage.putFile(imageUri!!)
+                            .continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
+                                if (!task.isSuccessful) {
+                                    throw task.exception!!
+                                }
+                                return@Continuation userAvatarStorage.downloadUrl
+                            })
+                            .addOnCompleteListener { taskSnapshot ->
+                                // Get a URL to the uploaded content
+                                imageUri = taskSnapshot.result
+                                signUpUser(name)
+                            }.addOnFailureListener {
+                                showMessage(this, it.localizedMessage.toString())
+                            }
 
                     } else {
-                        // If sign in fails, display a message to the user.
-                        Log.d(TAG, "createUserWithEmail:failure", authTask.exception)
-                        progressBar.visibility = View.GONE
-                        showMessage(authTask.exception?.localizedMessage.toString())
+                        signUpUser(name)
                     }
+
+                } else {
+                    // If sign in fails, display a message to the user.
+                    progressBar.visibility = View.GONE
+                    showMessage(this, authTask.exception?.localizedMessage.toString())
                 }
+            }
     }
 
     private fun signUpUser(name: String) {
         loginAuth.currentUser?.updateProfile(
-                UserProfileChangeRequest.Builder()
-                        .setDisplayName(name)
-                        .setPhotoUri(imageUri)
-                        .build()
+            UserProfileChangeRequest.Builder()
+                .setDisplayName(name)
+                .setPhotoUri(imageUri)
+                .build()
         )
-                ?.addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Log.d(TAG, "User profile updated.")
-                        Log.d("AvatarFD", imageUri.toString())
-                        progressBar.visibility = View.GONE
-                        showMessage("Welcome : ".plus(loginAuth.currentUser?.displayName))
-                        startMainActivity()
-                    }
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    progressBar.visibility = View.GONE
+                    showMessage(this, "Welcome : ".plus(loginAuth.currentUser?.displayName))
+                    startMainActivity()
                 }
+            }
     }
 
     private fun startMainActivity() {
         startActivity(Intent(this, MainActivity::class.java))
         finish()
-    }
-
-    private fun showMessage(message: String) {
-        Toast.makeText(this.applicationContext, message, Toast.LENGTH_LONG).show()
     }
 }

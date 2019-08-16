@@ -10,7 +10,7 @@
         android:id="@+id/appbar"
         layout="@layout/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/itemRecyclerView"
@@ -21,6 +21,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appbar"
         tools:listitem="@layout/item_layout" />
+
+    <ProgressBar
+        android:id="@+id/loading"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        app:layout_constraintBottom_toBottomOf="@id/itemRecyclerView"
+        app:layout_constraintEnd_toEndOf="@id/itemRecyclerView"
+        app:layout_constraintStart_toStartOf="@+id/itemRecyclerView"
+        app:layout_constraintTop_toTopOf="@+id/itemRecyclerView" />
+
+    <TextView
+        android:id="@+id/loadingTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:text="@string/loading"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintEnd_toEndOf="@+id/itemRecyclerView"
+        app:layout_constraintStart_toStartOf="@+id/itemRecyclerView"
+        app:layout_constraintTop_toBottomOf="@+id/loading" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"

@@ -4,12 +4,12 @@
     android:id="@+id/food_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
+    android:layout_marginTop="10dp"
     android:clickable="true"
     android:focusable="true"
     android:transitionName="food_parent"
     app:cardCornerRadius="0dp"
-    app:cardElevation="3dp">
+    app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/relativeLayout"
@@ -22,11 +22,11 @@
             android:layout_height="0dp"
             android:contentDescription="@string/food_name"
             android:scaleType="centerCrop"
-            app:layout_constraintBottom_toTopOf="@id/iFoodName"
             app:layout_constraintDimensionRatio="H,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/iFoodName"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -34,14 +34,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/fab_margin"
-            android:lineSpacingExtra="8dp"
-            android:text="@string/food_name"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:lineSpacingExtra="@dimen/card_dimn"
+            android:text="Food Name\n270 Rs"
+            android:textSize="16sp"
             android:textColor="@color/primaryText"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iFoodImage" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iFoodImage" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/optionButton"
@@ -54,10 +54,10 @@
             app:iconPadding="0dp"
             app:iconTint="@color/primaryText"
             app:icon="@drawable/ic_more_vert_black_24dp"
-            app:rippleColor="@color/color_secondary_variant"
+            app:layout_constraintBottom_toBottomOf="@id/iFoodName"
             app:iconGravity="textStart"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/iFoodName"
-            app:layout_constraintTop_toBottomOf="@id/iFoodImage" />
+            app:layout_constraintTop_toTopOf="@id/iFoodName"
+            app:rippleColor="@color/color_background_selected" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

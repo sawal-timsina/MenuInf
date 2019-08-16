@@ -3,6 +3,7 @@ package com.codeace.menuinf.helpers
 import android.content.Context
 import android.text.TextUtils
 import android.widget.ImageView
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.codeace.menuinf.R
 import com.codeace.menuinf.entity.FoodData
@@ -17,6 +18,10 @@ val imagePickCode = 1000
 fun setImage(context: Context, url: String, imageView: ImageView, placeHolder: Int = R.drawable.imageplaceholder) {
     Glide.with(context).load(url).centerCrop()
         .placeholder(placeHolder).into(imageView)
+}
+
+fun showMessage(context: Context, message: String) {
+    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
 }
 
 inline fun checkMail(email : String, editText : TextInputEditText, errorMessage : String, func: () -> Unit) {
