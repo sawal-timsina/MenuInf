@@ -1,25 +1,19 @@
 package com.codeace.menuinf.db
 
 import android.content.ContentValues.TAG
-import android.net.Uri
 import android.os.AsyncTask
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.codeace.menuinf.entity.FoodData
 import com.codeace.menuinf.helpers.sort
-import com.google.android.gms.tasks.Continuation
-import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.UploadTask
 
 class FoodRepository {
     //    private val foodDataDao: FoodDataDao
     private val database = FirebaseDatabase.getInstance().reference
-    private val foodImageStorage = FirebaseStorage.getInstance().reference
     private val menu: MutableList<FoodData> = mutableListOf()
     internal var allFoodData: MutableLiveData<List<FoodData>> = MutableLiveData()
 
@@ -60,7 +54,7 @@ class FoodRepository {
 
     fun insert(foodData: FoodData) {
         foodData.id = menu.last().id?.plus(1)
-        uploadPicture(foodData)
+//        uploadPicture(foodData)
 
         Log.d("DBAdd", menu.toString())
 //        apiServiceFactory.insertFoodData(foodData)
@@ -68,19 +62,12 @@ class FoodRepository {
     }
 
     fun update(foodData: FoodData) {
-        uploadPicture(foodData)
+//        uploadPicture(foodData)
         Log.d("DBUpdate", menu.toString())
 //        DatabaseAsyncTask(foodDataDao, 2).execute(foodData)
     }
 
     fun delete(foodData: FoodData, pos: Int) {
-        foodImageStorage.child("foodImage/${foodData.food_name}${foodData.id}.jpg").delete()
-            .addOnSuccessListener {
-                database.child("foodData").child(foodData.id.toString()).removeValue()
-                Log.d("FoodI", "Image Deleted")
-            }.addOnFailureListener {
-                Log.d("FoodI", it.localizedMessage.toString())
-            }
 
         Log.d("DBDelete", foodData.toString())
 //        DatabaseAsyncTask(foodDataDao, 3).execute(foodData)
@@ -88,27 +75,6 @@ class FoodRepository {
 
     fun deleteAll() {
 //        DatabaseAsyncTask(foodDataDao, 4).execute()
-    }
-
-    private fun uploadPicture(data: FoodData) {
-        val imageUri = foodImageStorage.child("foodImage/${data.food_name}${data.id}.jpg")
-        imageUri.putFile(Uri.parse(data.food_image))
-            .continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
-                if (!task.isSuccessful) {
-                    throw task.exception!!
-                }
-                return@Continuation imageUri.downloadUrl
-            })
-            .addOnCompleteListener { taskSnapshot ->
-                // Get a URL to the uploaded content
-                if (taskSnapshot.isSuccessful) {
-                    data.food_image = taskSnapshot.result.toString()
-                    database.child("foodData").child(data.id.toString()).setValue(data)
-                    Log.d("FoodI", taskSnapshot.result.toString())
-                } else {
-                    Log.d("FoodF", taskSnapshot.exception?.localizedMessage.toString())
-                }
-            }
     }
 
     private class DatabaseAsyncTask internal constructor(

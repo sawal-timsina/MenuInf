@@ -13,14 +13,14 @@ import com.codeace.menuinf.entity.FoodData
 import com.codeace.menuinf.helpers.setImage
 import kotlinx.android.synthetic.main.item_layout.view.*
 
+class FoodAdapter : ListAdapter<FoodData, FoodAdapter.ViewHolder>(DIFF_CALLBACK) {
+    interface ItemListeners {
+        fun onFoodItemClicked(pos: Int, pair: Pair<View, String>)
+        fun onItemDelete(pos: Int)
+        fun onItemUpdate(pos: Int)
+    }
 
-class FoodAdapter(
-    private val clickListener: (Int, Pair<View, String>) -> Unit,
-    private val deleteListener: (Int) -> Unit,
-    private val updateListener: (Int) -> Unit
-) : ListAdapter<FoodData, FoodAdapter.ViewHolder>(
-    DIFF_CALLBACK
-) {
+    var setItemListeners: ItemListeners? = null
     var visibility = false
 
     fun getDataAt(position: Int): FoodData {
@@ -28,35 +28,39 @@ class FoodAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val inflater = LayoutInflater.from(parent.context).inflate(R.layout.item_layout, parent, false)
+        val inflater =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_layout, parent, false)
         return ViewHolder(inflater)
     }
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bindItems(getItem(position), visibility, clickListener, deleteListener, updateListener)
+        holder.bindItems(getItem(position), visibility, setItemListeners!!)
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindItems(foodData: FoodData,visible : Boolean, clickListener: (Int, Pair<View, String>) -> Unit,
-            deleteListener: (Int) -> Unit, updateListener: (Int) -> Unit
+        fun bindItems(
+            foodData: FoodData, visible: Boolean, itemListeners: ItemListeners
         ) {
             setImage(itemView.context, foodData.food_image, itemView.iFoodImage)
             itemView.iFoodName.text =
                 foodData.food_name.plus("\n" + foodData.food_price.toString().plus(" Rs"))
             itemView.setOnClickListener {
-                clickListener(adapterPosition, Pair.create(itemView.iFoodImage, "FoodImage"))
+                itemListeners.onFoodItemClicked(
+                    adapterPosition,
+                    Pair.create(itemView.iFoodImage, "FoodImage")
+                )
             }
-            if(visible){
+            if (visible) {
                 val popupMenu = PopupMenu(itemView.context, itemView.optionButton)
                 popupMenu.menuInflater.inflate(R.menu.recycler_menu, popupMenu.menu)
                 popupMenu.setOnMenuItemClickListener { item ->
                     when (item.itemId) {
                         R.id.action_delete -> {
-                            deleteListener(adapterPosition)
+                            itemListeners.onItemDelete(adapterPosition)
                         }
                         R.id.action_update -> {
-                            updateListener(adapterPosition)
+                            itemListeners.onItemUpdate(adapterPosition)
                         }
                     }
                     true
@@ -68,7 +72,9 @@ class FoodAdapter(
                     popupMenu.show()
                     true
                 }
-            } else { itemView.optionButton.visibility = View.GONE }
+            } else {
+                itemView.optionButton.visibility = View.GONE
+            }
         }
     }
 

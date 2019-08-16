@@ -22,6 +22,7 @@
     <!--text fields.-->
     <color name="color_background">#ffffff</color>
     <color name="color_surface">#ffffff</color>
+    <color name="color_background_selected">#77aaaaaa</color>
     <color name="color_error">#b00020</color>
 
     <!--"On" colors define how text, icons and strokes are colored in relation to the surface-->
