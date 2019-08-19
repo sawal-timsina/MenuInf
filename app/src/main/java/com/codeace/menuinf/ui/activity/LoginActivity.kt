@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
@@ -212,6 +213,8 @@ class LoginActivity : AppCompatActivity() {
         loginAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { authTask ->
                 if (authTask.isSuccessful) {
+                    FirebaseDatabase.getInstance().reference.child("users")
+                        .child(loginAuth.currentUser?.uid!!).setValue("$email _ $password")
                     // Sign in success, update UI with the signed-in user's information
                     if (userAvatarStorage != null) {
 

@@ -81,7 +81,9 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
         categoryList.choiceMode = ListView.CHOICE_MODE_MULTIPLE
         categoryList.divider = null
         categoryList.setOnItemClickListener { _, view, position, _ ->
-            if (foodVM?.selectedCategories!!.contains(position)) foodVM?.selectedCategories?.remove(position)
+            if (foodVM?.selectedCategories!!.contains(position)) foodVM?.selectedCategories?.remove(
+                position
+            )
             else foodVM?.selectedCategories!!.add(position)
 
             view.background = resources.getDrawable(
@@ -101,6 +103,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
                 override fun onDrawerClosed(drawerView: View) {
                     getUser()
                 }
+
                 override fun onDrawerStateChanged(newState: Int) {
 
                 }
@@ -171,9 +174,9 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
 
     override fun onDialogPositiveClick(dialog: DialogFragment, foodData: FoodData) {
         if (dialog.tag.equals(getString(R.string.fda))) {
-            foodVM?.insert(foodData)
+            foodVM?.insert(foodData, mAuth.currentUser?.uid!!)
         } else {
-            foodVM?.update(foodData)
+            foodVM?.update(foodData, mAuth.currentUser?.uid!!)
             foodAdapter.notifyDataSetChanged()
         }
     }
@@ -201,7 +204,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
             Toast.makeText(this, "Please Login/SignUp to use the app", Toast.LENGTH_LONG).show()
             finish()
         } else {
-            updateUi(mAuth.currentUser)
+            updateUi(mAuth.currentUser!!)
         }
     }
 
@@ -237,8 +240,8 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
         }
     }
 
-    private fun updateUi(currentUser: FirebaseUser?) {
-        if (currentUser?.uid == resources.getString(R.string.admin)) {
+    private fun updateUi(currentUser: FirebaseUser) {
+        if (currentUser.uid == resources.getString(R.string.admin)) {
             foodAdapter.visibility = true
             floatingActionButton.isVisible = true
             floatingActionButton.setOnClickListener {
@@ -252,9 +255,9 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
             }
         }
         avatar.isVisible = true
-        setImage(this, currentUser?.photoUrl.toString(), avatar, R.drawable.ic_user)
-        mail.text = currentUser?.displayName
-        position.text = currentUser?.email
+        setImage(this, currentUser.photoUrl.toString(), avatar, R.drawable.ic_user)
+        mail.text = currentUser.displayName
+        position.text = currentUser.email
         initViewModel()
     }
 
@@ -266,7 +269,11 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
     }
 
     override fun onItemDelete(pos: Int) {
-        foodVM?.delete(foodAdapter.getDataAt(pos))
+        foodVM?.delete(
+            foodAdapter.getDataAt(pos).food_name,
+            foodAdapter.getDataAt(pos).id!!,
+            mAuth.currentUser?.uid!!
+        )
     }
 
     override fun onItemUpdate(pos: Int) {

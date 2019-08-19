@@ -84,21 +84,21 @@ class FoodViewModel(application: Application) : AndroidViewModel(application) {
             listItem
     }
 
-    fun insert(foodData: FoodData) {
+    fun insert(foodData: FoodData, email: String) {
         foodData.id = menu.last().id?.plus(1)
-        uploadPicture(foodData)
+        uploadPicture(foodData, email.plus("_${foodData.id}"))
         isChanged = true
     }
 
-    fun update(foodData: FoodData) {
-        uploadPicture(foodData)
+    fun update(foodData: FoodData, email: String) {
+        uploadPicture(foodData, email.plus("_${foodData.id}"))
         isChanged = true
     }
 
-    fun delete(foodData: FoodData) {
-        foodImageStorage.child("foodImage/${foodData.food_name}${foodData.id}.jpg").delete()
+    fun delete(foodName: String, id: Int, email: String) {
+        foodImageStorage.child("foodImage/$foodName$id.jpg").delete()
             .addOnSuccessListener {
-                liveData.delete(foodData)
+                liveData.delete(email.plus("_$id"))
             }.addOnFailureListener {
                 showMessage(getApplication(), it.localizedMessage.toString())
             }
@@ -109,10 +109,10 @@ class FoodViewModel(application: Application) : AndroidViewModel(application) {
         isChanged = true
     }
 
-    private fun uploadPicture(data: FoodData) {
+    private fun uploadPicture(data: FoodData, email: String) {
         val imageUri = foodImageStorage.child("foodImage/${data.food_name}${data.id}.jpg")
         if (data.food_image.contains("https://firebasestorage.googleapis.com", true)) {
-            liveData.insert(data)
+            liveData.insert(data, email)
         } else {
             imageUri.putFile(Uri.parse(data.food_image))
                 .continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
@@ -125,7 +125,7 @@ class FoodViewModel(application: Application) : AndroidViewModel(application) {
                     // Get a URL to the uploaded content
                     if (taskSnapshot.isSuccessful) {
                         data.food_image = taskSnapshot.result.toString()
-                        liveData.insert(data)
+                        liveData.insert(data, email)
                     } else {
                         showMessage(
                             getApplication(),

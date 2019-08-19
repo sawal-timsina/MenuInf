@@ -16,6 +16,7 @@ import com.codeace.menuinf.R
 import com.codeace.menuinf.entity.FoodData
 import com.codeace.menuinf.helpers.imagePickCode
 import com.codeace.menuinf.helpers.setImage
+import com.codeace.menuinf.helpers.showMessage
 
 class FoodDialog : DialogFragment() {
     private var foodData: FoodData? = null
@@ -77,6 +78,10 @@ class FoodDialog : DialogFragment() {
 
         dialogView.findViewById<Button>(R.id.dialogOk).setOnClickListener {
             when {
+                foodData!!.food_image.isEmpty() -> showMessage(
+                    activity!!,
+                    "Please select image of a food."
+                )
                 editItemName.text.isEmpty() -> editItemName.error = resources.getString(R.string.field_error)
                 editItemCategory.text.isEmpty() -> editItemCategory.error = resources.getString(R.string.field_error)
                 editItemSpiciness.text.isEmpty() -> editItemSpiciness.error = resources.getString(R.string.field_error)

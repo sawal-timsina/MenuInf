@@ -18,12 +18,12 @@ class FireBaseLiveData(private val func: (List<FoodData>) -> Unit) : LiveData<Li
         query!!.addValueEventListener(listener)
     }
 
-    fun insert(foodData: FoodData) {
-        query!!.child(foodData.id.toString()).setValue(foodData)
+    fun insert(foodData: FoodData, email: String) {
+        query!!.child(email).setValue(foodData)
     }
 
-    fun delete(foodData: FoodData) {
-        query!!.child(foodData.id.toString()).removeValue()
+    fun delete(email: String) {
+        query!!.child(email).removeValue()
     }
 
     public override fun setValue(value: List<FoodData>?) {
