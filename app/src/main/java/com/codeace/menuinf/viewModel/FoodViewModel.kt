@@ -23,7 +23,7 @@ class FoodViewModel(application: Application) : AndroidViewModel(application) {
     private val liveData = FireBaseLiveData { menu = it.toMutableList() }
 
     internal var maxPrice: Double = 0.0
-    internal var isChanged: Boolean = true
+    internal var isDataChanged: Boolean = true
 
     init {
         liveData.query = HOT_STOCK_REF
@@ -87,12 +87,12 @@ class FoodViewModel(application: Application) : AndroidViewModel(application) {
     fun insert(foodData: FoodData, email: String) {
         foodData.id = menu.last().id?.plus(1)
         uploadPicture(foodData, email.plus("_${foodData.id}"))
-        isChanged = true
+        isDataChanged = true
     }
 
     fun update(foodData: FoodData, email: String) {
         uploadPicture(foodData, email.plus("_${foodData.id}"))
-        isChanged = true
+        isDataChanged = true
     }
 
     fun delete(foodName: String, id: Int, email: String) {
@@ -102,11 +102,10 @@ class FoodViewModel(application: Application) : AndroidViewModel(application) {
             }.addOnFailureListener {
                 showMessage(getApplication(), it.localizedMessage.toString())
             }
-        isChanged = true
+        isDataChanged = true
     }
 
     fun deleteAll() {
-        isChanged = true
     }
 
     private fun uploadPicture(data: FoodData, email: String) {
@@ -122,7 +121,6 @@ class FoodViewModel(application: Application) : AndroidViewModel(application) {
                     return@Continuation imageUri.downloadUrl
                 })
                 .addOnCompleteListener { taskSnapshot ->
-                    // Get a URL to the uploaded content
                     if (taskSnapshot.isSuccessful) {
                         data.food_image = taskSnapshot.result.toString()
                         liveData.insert(data, email)

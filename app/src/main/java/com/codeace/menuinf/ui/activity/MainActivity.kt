@@ -90,6 +90,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
                 if (foodVM?.selectedCategories!!.contains(position)) R.drawable.selected else R.drawable.dselected,
                 null
             )
+
             filterItems()
             drawer_layout.closeDrawer(GravityCompat.START)
         }
@@ -100,12 +101,9 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
             drawer_layout.addDrawerListener(object : DrawerLayout.DrawerListener {
                 override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
                 override fun onDrawerOpened(drawerView: View) {}
+                override fun onDrawerStateChanged(newState: Int) {}
                 override fun onDrawerClosed(drawerView: View) {
                     getUser()
-                }
-
-                override fun onDrawerStateChanged(newState: Int) {
-
                 }
             })
         }
@@ -155,23 +153,6 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
         return true
     }
 
-    private fun filterItems() {
-        foodVM?.setLiveData(
-            foodVM?.filterByData(
-                rangeSeekBar.getMinThumbValue().toDouble(),
-                rangeSeekBar.getMaxThumbValue().toDouble()
-            )!!
-        )
-    }
-
-    private fun searchItems(newText: String) {
-        if (newText.isNotEmpty()) {
-            foodVM?.setLiveData(foodVM!!.searchItem(newText))
-        } else {
-            foodVM?.setDefault()
-        }
-    }
-
     override fun onDialogPositiveClick(dialog: DialogFragment, foodData: FoodData) {
         if (dialog.tag.equals(getString(R.string.fda))) {
             foodVM?.insert(foodData, mAuth.currentUser?.uid!!)
@@ -189,6 +170,44 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
         minText.text = "$minThumbValue"
         maxText.text = "$maxThumbValue"
         filterItems()
+    }
+
+    override fun onFoodItemClicked(pos: Int, pair: Pair<View, String>) {
+        val intent = Intent(this, FoodItemDetails::class.java)
+        val option = ActivityOptionsCompat.makeSceneTransitionAnimation(this, pair)
+        intent.putExtra("extra_object", foodAdapter.getDataAt(pos) as Serializable)
+        startActivity(intent, option.toBundle())
+    }
+
+    override fun onItemDelete(pos: Int) {
+        foodVM?.delete(
+            foodAdapter.getDataAt(pos).food_name,
+            foodAdapter.getDataAt(pos).id!!,
+            mAuth.currentUser?.uid!!
+        )
+    }
+
+    override fun onItemUpdate(pos: Int) {
+        val dialog = FoodDialog()
+        dialog.dataToUpdate(foodAdapter.getDataAt(pos))
+        dialog.show(supportFragmentManager, foodAdapter.getDataAt(pos).id.toString())
+    }
+
+    private fun filterItems() {
+        foodVM?.setLiveData(
+            foodVM?.filterByData(
+                rangeSeekBar.getMinThumbValue().toDouble(),
+                rangeSeekBar.getMaxThumbValue().toDouble()
+            )!!
+        )
+    }
+
+    private fun searchItems(newText: String) {
+        if (newText.isNotEmpty()) {
+            foodVM?.setLiveData(foodVM!!.searchItem(newText))
+        } else {
+            foodVM?.setDefault()
+        }
     }
 
     private fun getUser() {
@@ -217,16 +236,16 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
 
         foodVM?.getLiveData()!!.observe(this, Observer { foodList ->
             foodAdapter.submitList(foodList)
-            initCategory()
+            getCategories()
         })
     }
 
-    private fun initCategory() {
+    private fun getCategories() {
         if (foodAdapter.currentList.size != 0) {
             loading.visibility = View.GONE
             loadingTextView.visibility = View.GONE
         }
-        if (foodVM?.isChanged!!) {
+        if (foodVM?.isDataChanged!!) {
             foodVM?.getCategories(foodAdapter.currentList)
             categoryList.adapter = ArrayAdapter(
                 this@MainActivity,
@@ -236,7 +255,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
 
             minText.text = rangeSeekBar.getMinThumbValue().toString()
             maxText.text = rangeSeekBar.getMaxThumbValue().toString()
-            foodVM?.isChanged = false
+            foodVM?.isDataChanged = false
         }
     }
 
@@ -259,26 +278,5 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
         mail.text = currentUser.displayName
         position.text = currentUser.email
         initViewModel()
-    }
-
-    override fun onFoodItemClicked(pos: Int, pair: Pair<View, String>) {
-        val intent = Intent(this, FoodItemDetails::class.java)
-        val option = ActivityOptionsCompat.makeSceneTransitionAnimation(this, pair)
-        intent.putExtra("extra_object", foodAdapter.getDataAt(pos) as Serializable)
-        startActivity(intent, option.toBundle())
-    }
-
-    override fun onItemDelete(pos: Int) {
-        foodVM?.delete(
-            foodAdapter.getDataAt(pos).food_name,
-            foodAdapter.getDataAt(pos).id!!,
-            mAuth.currentUser?.uid!!
-        )
-    }
-
-    override fun onItemUpdate(pos: Int) {
-        val dialog = FoodDialog()
-        dialog.dataToUpdate(foodAdapter.getDataAt(pos))
-        dialog.show(supportFragmentManager, foodAdapter.getDataAt(pos).id.toString())
     }
 }

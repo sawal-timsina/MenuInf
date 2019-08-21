@@ -35,7 +35,7 @@
     <string name="error_email">Invalid Email!!</string>
     <string name="pass_not_match">Password Doesn\'t Match!!</string>
     <string name="forgot_password"><u>Forgot Password?</u></string>
-    <string name="already_have_an_account">Have account! <u>Sign In</u></string>
+    <string name="already_have_an_account">Already have an account? <u>Sign In</u></string>
     <string name="don_t_have_an_account_sign_up">Don\'t have an account? <u>Sign Up</u></string>
     <string name="loading">Fetching Data…</string>
 </resources>
