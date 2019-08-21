@@ -11,16 +11,12 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
 import com.codeace.menuinf.R
-import com.codeace.menuinf.helpers.checkMail
-import com.codeace.menuinf.helpers.checkPassword
-import com.codeace.menuinf.helpers.imagePickCode
-import com.codeace.menuinf.helpers.showMessage
+import com.codeace.menuinf.helpers.*
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
@@ -213,8 +209,10 @@ class LoginActivity : AppCompatActivity() {
         loginAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { authTask ->
                 if (authTask.isSuccessful) {
-                    FirebaseDatabase.getInstance().reference.child("users")
-                        .child(loginAuth.currentUser?.uid!!).setValue("$email _ $password")
+                    val user = getCurrentUser(loginAuth.currentUser?.uid!!)
+                    user.child("email").setValue(email)
+                    user.child("password").setValue(password)
+                    user.child("isAdmin").setValue(false)
                     // Sign in success, update UI with the signed-in user's information
                     if (userAvatarStorage != null) {
 

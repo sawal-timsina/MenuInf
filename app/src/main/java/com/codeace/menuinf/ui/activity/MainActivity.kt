@@ -26,6 +26,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.codeace.menuinf.R
 import com.codeace.menuinf.adapters.FoodAdapter
 import com.codeace.menuinf.entity.FoodData
+import com.codeace.menuinf.helpers.getCurrentUser
+import com.codeace.menuinf.helpers.getListener
 import com.codeace.menuinf.helpers.setImage
 import com.codeace.menuinf.ui.fragments.FoodDialog
 import com.codeace.menuinf.viewModel.FoodViewModel
@@ -260,19 +262,22 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
     }
 
     private fun updateUi(currentUser: FirebaseUser) {
-        if (currentUser.uid == resources.getString(R.string.admin)) {
-            foodAdapter.visibility = true
-            floatingActionButton.isVisible = true
-            floatingActionButton.setOnClickListener {
-                val dialog = FoodDialog()
-                dialog.show(supportFragmentManager, "FoodDialogAdd")
-            }
+        getCurrentUser(currentUser.uid).child("isAdmin").addListenerForSingleValueEvent(
+            getListener {
+                if (it.getValue(Boolean::class.java)!!) {
+                    foodAdapter.visibility = true
+                    floatingActionButton.isVisible = true
+                    floatingActionButton.setOnClickListener {
+                        val dialog = FoodDialog()
+                        dialog.show(supportFragmentManager, "FoodDialogAdd")
+                    }
 
-            floatingActionButton.setOnLongClickListener {
-                foodVM?.deleteAll()
-                true
-            }
-        }
+                    floatingActionButton.setOnLongClickListener {
+                        foodVM?.deleteAll()
+                        true
+                    }
+                }
+            })
         avatar.isVisible = true
         setImage(this, currentUser.photoUrl.toString(), avatar, R.drawable.ic_user)
         mail.text = currentUser.displayName

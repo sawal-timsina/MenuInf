@@ -3,46 +3,46 @@ package com.codeace.menuinf.viewModel
 import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import com.codeace.menuinf.db.FoodRepository
 import com.codeace.menuinf.entity.FoodData
 import com.codeace.menuinf.helpers.showMessage
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 
 class FoodViewModel(application: Application) : AndroidViewModel(application) {
-    private val HOT_STOCK_REF = FirebaseDatabase.getInstance().reference.child("foodData")
     private val foodImageStorage = FirebaseStorage.getInstance().reference
 
-    private var menu: MutableList<FoodData> = mutableListOf()
+    private val repository = FoodRepository(application)
+
+    private val menu: MutableList<FoodData> = mutableListOf()
 
     internal val selectedCategories = mutableListOf<Int>()
-    internal val categoryListItems = mutableSetOf<String>()
 
-    private val liveData = FireBaseLiveData { menu = it.toMutableList() }
+    internal val categoryListItems = mutableSetOf<String>()
 
     internal var maxPrice: Double = 0.0
     internal var isDataChanged: Boolean = true
 
-    init {
-        liveData.query = HOT_STOCK_REF
-        liveData.setListener()
-    }
-
-    fun getLiveData(): FireBaseLiveData {
-        return liveData
+    fun getLiveData(): LiveData<List<FoodData>> {
+        return repository.getAllFoodData()
     }
 
     fun setLiveData(list: List<FoodData>) {
-        liveData.value = list
+        repository.getAllFoodData().removeSource(repository.foodDataDao.allFoodData)
+        repository.getAllFoodData().value = list
     }
 
     fun setDefault() {
-        liveData.value = menu
+        repository.getAllFoodData().addSource(repository.foodDataDao.allFoodData) { list ->
+            repository.getAllFoodData().setValue(list)
+        }
     }
 
     private fun clearItems() {
+        menu.clear()
         categoryListItems.clear()
         maxPrice = 0.0
     }
@@ -56,6 +56,7 @@ class FoodViewModel(application: Application) : AndroidViewModel(application) {
     fun getCategories(list: List<FoodData>) {
         clearItems()
         list.forEach {
+            menu.add(it)
             categoryListItems.add(it.food_category)
             maxPrice = maxOf(maxPrice, it.food_price)
         }
@@ -98,7 +99,8 @@ class FoodViewModel(application: Application) : AndroidViewModel(application) {
     fun delete(foodName: String, id: Int, email: String) {
         foodImageStorage.child("foodImage/$foodName$id.jpg").delete()
             .addOnSuccessListener {
-                liveData.delete(email.plus("_$id"))
+                repository.delete(email.plus("_$id"))
+                showMessage(getApplication(), "Data Deleted Successfully")
             }.addOnFailureListener {
                 showMessage(getApplication(), it.localizedMessage.toString())
             }
@@ -111,7 +113,8 @@ class FoodViewModel(application: Application) : AndroidViewModel(application) {
     private fun uploadPicture(data: FoodData, email: String) {
         val imageUri = foodImageStorage.child("foodImage/${data.food_name}${data.id}.jpg")
         if (data.food_image.contains("https://firebasestorage.googleapis.com", true)) {
-            liveData.insert(data, email)
+            repository.insert(data, email)
+            showMessage(this.getApplication(), "Data Updated Successfully")
         } else {
             imageUri.putFile(Uri.parse(data.food_image))
                 .continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
@@ -123,7 +126,8 @@ class FoodViewModel(application: Application) : AndroidViewModel(application) {
                 .addOnCompleteListener { taskSnapshot ->
                     if (taskSnapshot.isSuccessful) {
                         data.food_image = taskSnapshot.result.toString()
-                        liveData.insert(data, email)
+                        repository.insert(data, email)
+                        showMessage(this.getApplication(), "Data Inserted Successfully")
                     } else {
                         showMessage(
                             getApplication(),
