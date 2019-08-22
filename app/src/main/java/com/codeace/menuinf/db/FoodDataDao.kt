@@ -7,8 +7,8 @@ import com.codeace.menuinf.entity.FoodData
 @Dao
 interface FoodDataDao {
 
-    @get:Query("SELECT * from food_items")
-    val allFoodData: LiveData<List<FoodData>>
+    @Query("SELECT * from food_items ORDER BY :type ASC")
+    fun getAllFoodData(type: String): LiveData<List<FoodData>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(foodData: FoodData)
@@ -21,4 +21,10 @@ interface FoodDataDao {
 
     @Query("DELETE FROM food_items")
     fun deleteAll()
+
+    @Query("SELECT * FROM food_items WHERE food_name LIKE :word ")
+    fun searchFoodData(word: String): List<FoodData>
+
+    @Query("SELECT * FROM food_items WHERE food_price BETWEEN :min AND :max AND food_category IN (:categories)")
+    fun filterFoodData(min: Int, max: Int, categories: List<String>): List<FoodData>
 }

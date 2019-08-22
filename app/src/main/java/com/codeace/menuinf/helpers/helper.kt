@@ -2,14 +2,9 @@ package com.codeace.menuinf.helpers
 
 import android.content.Context
 import android.text.TextUtils
-import android.util.Log
-import android.widget.ImageView
 import android.widget.Toast
-import com.bumptech.glide.Glide
-import com.codeace.menuinf.R
 import com.codeace.menuinf.entity.FoodData
 import com.google.android.material.textfield.TextInputEditText
-import com.google.firebase.database.*
 import java.util.regex.Pattern
 
 val EMAIL_REGEX =
@@ -17,26 +12,7 @@ val EMAIL_REGEX =
 
 val imagePickCode = 1000
 
-fun getCurrentUser(uid: String): DatabaseReference {
-    return FirebaseDatabase.getInstance().reference.child("users").child(uid)
-}
-
-fun getListener(func: (DataSnapshot) -> Unit): ValueEventListener {
-    return object : ValueEventListener {
-        override fun onDataChange(dataSnapshot: DataSnapshot) {
-            func(dataSnapshot)
-        }
-
-        override fun onCancelled(databaseError: DatabaseError) {
-            Log.e("FirebaseQueryLiveData", "Can't listen to query ", databaseError.toException())
-        }
-    }
-}
-
-fun setImage(context: Context, url: String, imageView: ImageView, placeHolder: Int = R.drawable.imageplaceholder) {
-    Glide.with(context).load(url).centerCrop()
-        .placeholder(placeHolder).into(imageView)
-}
+val TAG = "DataTest"
 
 fun showMessage(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_LONG).show()

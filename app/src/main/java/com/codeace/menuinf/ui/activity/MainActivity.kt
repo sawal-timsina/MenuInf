@@ -3,6 +3,7 @@ package com.codeace.menuinf.ui.activity
 import android.content.Intent
 import android.os.Bundle
 import android.transition.Explode
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -23,12 +24,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.codeace.menuinf.R
 import com.codeace.menuinf.adapters.FoodAdapter
 import com.codeace.menuinf.entity.FoodData
-import com.codeace.menuinf.helpers.getCurrentUser
-import com.codeace.menuinf.helpers.getListener
-import com.codeace.menuinf.helpers.setImage
 import com.codeace.menuinf.ui.fragments.FoodDialog
 import com.codeace.menuinf.viewModel.FoodViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -61,8 +60,15 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
             )
         )
 
-        setImage(this, "", foodImageNav, R.drawable.background)
+        Glide.with(this).load("").centerCrop()
+            .placeholder(R.drawable.background).into(foodImageNav)
         mAuth = FirebaseAuth.getInstance()
+
+        simpleSwipeRefreshLayout.setOnRefreshListener {
+            Log.d(com.codeace.menuinf.helpers.TAG, "Refreshed")
+        }
+
+        simpleSwipeRefreshLayout.isRefreshing = true
 
         itemRecyclerView.layoutManager = LinearLayoutManager(this)
         foodAdapter.setItemListeners = this
@@ -114,6 +120,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
 
     override fun onStart() {
         super.onStart()
+        Log.d(com.codeace.menuinf.helpers.TAG, "GetUser")
         getUser()
     }
 
@@ -216,15 +223,18 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
         foodAdapter.visibility = false
         floatingActionButton.isVisible = false
         avatar.isVisible = false
-        setImage(this, "", avatar)
+        Glide.with(this).load("").centerCrop()
+            .placeholder(R.drawable.imageplaceholder).into(avatar)
         mail.text = ""
         position.text = ""
-
+        Log.d(com.codeace.menuinf.helpers.TAG, "UserCleared")
         if (mAuth.currentUser == null) {
             startActivity(Intent(this, LoginActivity::class.java))
             Toast.makeText(this, "Please Login/SignUp to use the app", Toast.LENGTH_LONG).show()
             finish()
+            Log.d(com.codeace.menuinf.helpers.TAG, "LoginRequest")
         } else {
+            Log.d(com.codeace.menuinf.helpers.TAG, "UpdateUI")
             updateUi(mAuth.currentUser!!)
         }
     }
@@ -235,20 +245,32 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
                 return FoodViewModel(application) as T
             }
         }).get(FoodViewModel::class.java)
+        Log.d(com.codeace.menuinf.helpers.TAG, "View Model Initialized")
 
         foodVM?.getLiveData()!!.observe(this, Observer { foodList ->
+            Log.d(com.codeace.menuinf.helpers.TAG, "New List : ".plus(foodList.toString()))
             foodAdapter.submitList(foodList)
-            getCategories()
+            getCategories(foodList.isNotEmpty())
         })
     }
 
-    private fun getCategories() {
-        if (foodAdapter.currentList.size != 0) {
-            loading.visibility = View.GONE
-            loadingTextView.visibility = View.GONE
+    private fun getCategories(isListEmpty: Boolean) {
+        Log.d(com.codeace.menuinf.helpers.TAG, "Disabling Loading Animation")
+        if (isListEmpty) {
+            simpleSwipeRefreshLayout.isRefreshing = false
+            Log.d(com.codeace.menuinf.helpers.TAG, "Loading Animation Disabled")
+        } else {
+            simpleSwipeRefreshLayout.isRefreshing = false
+            Log.d(com.codeace.menuinf.helpers.TAG, "List Empty")
         }
-        if (foodVM?.isDataChanged!!) {
-            foodVM?.getCategories(foodAdapter.currentList)
+        Log.d(com.codeace.menuinf.helpers.TAG, "Checking dataChange")
+        if (foodVM?.getIsDataChanged()!!) {
+            Log.d(com.codeace.menuinf.helpers.TAG, "Data Changed Detected")
+            foodVM?.getCategories()
+            Log.d(
+                com.codeace.menuinf.helpers.TAG,
+                "New Categories : ".plus(foodVM?.categoryListItems.toString())
+            )
             categoryList.adapter = ArrayAdapter(
                 this@MainActivity,
                 R.layout.nav_header, foodVM?.categoryListItems!!.toList()
@@ -257,31 +279,34 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
 
             minText.text = rangeSeekBar.getMinThumbValue().toString()
             maxText.text = rangeSeekBar.getMaxThumbValue().toString()
-            foodVM?.isDataChanged = false
+            foodVM?.setIsDataChanged(false)
+            Log.d(com.codeace.menuinf.helpers.TAG, "Initialized SeekBar and Categories List")
         }
     }
 
     private fun updateUi(currentUser: FirebaseUser) {
-        getCurrentUser(currentUser.uid).child("isAdmin").addListenerForSingleValueEvent(
-            getListener {
-                if (it.getValue(Boolean::class.java)!!) {
-                    foodAdapter.visibility = true
-                    floatingActionButton.isVisible = true
-                    floatingActionButton.setOnClickListener {
-                        val dialog = FoodDialog()
-                        dialog.show(supportFragmentManager, "FoodDialogAdd")
-                    }
+        if (currentUser.uid == resources.getString(R.string.admin)) {
+            foodAdapter.visibility = true
+            floatingActionButton.isVisible = true
+            floatingActionButton.setOnClickListener {
+                val dialog = FoodDialog()
+                dialog.show(supportFragmentManager, "FoodDialogAdd")
+            }
 
-                    floatingActionButton.setOnLongClickListener {
-                        foodVM?.deleteAll()
-                        true
-                    }
-                }
-            })
+            floatingActionButton.setOnLongClickListener {
+                foodVM?.deleteAll()
+                true
+            }
+            Log.d(com.codeace.menuinf.helpers.TAG, "Buttons Enabled")
+        }
         avatar.isVisible = true
-        setImage(this, currentUser.photoUrl.toString(), avatar, R.drawable.ic_user)
+        Glide.with(this).load(currentUser.photoUrl.toString()).centerCrop()
+            .placeholder(R.drawable.ic_user).into(avatar)
         mail.text = currentUser.displayName
         position.text = currentUser.email
+        Log.d(com.codeace.menuinf.helpers.TAG, "UserAdded")
+
+        Log.d(com.codeace.menuinf.helpers.TAG, "View Model Initialize")
         initViewModel()
     }
 }

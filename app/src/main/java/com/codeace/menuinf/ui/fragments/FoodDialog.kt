@@ -12,10 +12,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.fragment.app.DialogFragment
+import com.bumptech.glide.Glide
 import com.codeace.menuinf.R
 import com.codeace.menuinf.entity.FoodData
 import com.codeace.menuinf.helpers.imagePickCode
-import com.codeace.menuinf.helpers.setImage
 import com.codeace.menuinf.helpers.showMessage
 
 class FoodDialog : DialogFragment() {
@@ -62,7 +62,8 @@ class FoodDialog : DialogFragment() {
             if (foodData == null) foodData =
                 FoodData(tag!!.toInt(), "", "", "", "", 0.0)
             if (foodData != null) {
-                setImage(activity!!, foodData!!.food_image, foodImage)
+                Glide.with(activity!!).load(foodData!!.food_image).centerCrop()
+                    .placeholder(R.drawable.imageplaceholder).into(foodImage)
                 editItemName.text = getEditableText(foodData!!.food_name)
                 editItemCategory.text = getEditableText(foodData!!.food_category)
                 editItemSpiciness.text = getEditableText(foodData!!.food_spiciness)
@@ -107,7 +108,8 @@ class FoodDialog : DialogFragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == imagePickCode) {
             foodData!!.food_image = data?.data.toString()
-            setImage(activity!!, foodData!!.food_image, foodImage)
+            Glide.with(activity!!).load(foodData!!.food_image).centerCrop()
+                .placeholder(R.drawable.imageplaceholder).into(foodImage)
         }
     }
 
