@@ -28,6 +28,7 @@ import com.bumptech.glide.Glide
 import com.codeace.menuinf.R
 import com.codeace.menuinf.adapters.FoodAdapter
 import com.codeace.menuinf.entity.FoodData
+import com.codeace.menuinf.helpers.TAG
 import com.codeace.menuinf.ui.fragments.FoodDialog
 import com.codeace.menuinf.viewModel.FoodViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -35,6 +36,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.innovattic.rangeseekbar.RangeSeekBar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_layout.*
+import kotlinx.android.synthetic.main.nav_header.view.*
 import kotlinx.android.synthetic.main.nav_layout.*
 import kotlinx.android.synthetic.main.toolbar.*
 import java.io.Serializable
@@ -62,10 +64,11 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
 
         Glide.with(this).load("").centerCrop()
             .placeholder(R.drawable.background).into(foodImageNav)
+        Glide.with(this).load(R.drawable.ic_item_not_found).into(noItem)
         mAuth = FirebaseAuth.getInstance()
 
         simpleSwipeRefreshLayout.setOnRefreshListener {
-            Log.d(com.codeace.menuinf.helpers.TAG, "Refreshed")
+            Log.d(TAG, "Refreshed")
         }
 
         simpleSwipeRefreshLayout.isRefreshing = true
@@ -88,18 +91,22 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
         rangeSeekBar.seekBarChangeListener = this
         categoryList.choiceMode = ListView.CHOICE_MODE_MULTIPLE
         categoryList.divider = null
-        categoryList.setOnItemClickListener { _, view, position, _ ->
-            if (foodVM?.selectedCategories!!.contains(position)) foodVM?.selectedCategories?.remove(
-                position
+        categoryList.setOnItemClickListener { _, view, _, _ ->
+            if (foodVM?.selectedCategories!!.contains(view.text1.text)) foodVM?.selectedCategories!!.remove(
+                view.text1.text
             )
-            else foodVM?.selectedCategories!!.add(position)
+            else foodVM?.selectedCategories!!.add(view.text1.text.toString())
 
             view.background = resources.getDrawable(
-                if (foodVM?.selectedCategories!!.contains(position)) R.drawable.selected else R.drawable.dselected,
+                if (foodVM?.selectedCategories!!.contains(view.text1.text)) R.drawable.selected else R.drawable.dselected,
                 null
             )
 
-            filterItems()
+            foodVM?.filterFoodData(
+                rangeSeekBar.getMinThumbValue(),
+                rangeSeekBar.getMaxThumbValue()
+            )
+
             drawer_layout.closeDrawer(GravityCompat.START)
         }
 
@@ -120,7 +127,7 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
 
     override fun onStart() {
         super.onStart()
-        Log.d(com.codeace.menuinf.helpers.TAG, "GetUser")
+        Log.d(TAG, "GetUser")
         getUser()
     }
 
@@ -141,7 +148,10 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
             }
 
             override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                filterItems()
+                foodVM?.filterFoodData(
+                    rangeSeekBar.getMinThumbValue(),
+                    rangeSeekBar.getMaxThumbValue()
+                )
                 return true
             }
         })
@@ -178,7 +188,10 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
     override fun onValueChanged(minThumbValue: Int, maxThumbValue: Int) {
         minText.text = "$minThumbValue"
         maxText.text = "$maxThumbValue"
-        filterItems()
+        foodVM?.filterFoodData(
+            rangeSeekBar.getMinThumbValue(),
+            rangeSeekBar.getMaxThumbValue()
+        )
     }
 
     override fun onFoodItemClicked(pos: Int, pair: Pair<View, String>) {
@@ -202,18 +215,9 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
         dialog.show(supportFragmentManager, foodAdapter.getDataAt(pos).id.toString())
     }
 
-    private fun filterItems() {
-        foodVM?.setLiveData(
-            foodVM?.filterByData(
-                rangeSeekBar.getMinThumbValue().toDouble(),
-                rangeSeekBar.getMaxThumbValue().toDouble()
-            )!!
-        )
-    }
-
     private fun searchItems(newText: String) {
         if (newText.isNotEmpty()) {
-            foodVM?.setLiveData(foodVM!!.searchItem(newText))
+            foodVM!!.searchItem(newText)
         } else {
             foodVM?.setDefault()
         }
@@ -227,60 +231,15 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
             .placeholder(R.drawable.imageplaceholder).into(avatar)
         mail.text = ""
         position.text = ""
-        Log.d(com.codeace.menuinf.helpers.TAG, "UserCleared")
+        Log.d(TAG, "UserCleared")
         if (mAuth.currentUser == null) {
             startActivity(Intent(this, LoginActivity::class.java))
             Toast.makeText(this, "Please Login/SignUp to use the app", Toast.LENGTH_LONG).show()
             finish()
-            Log.d(com.codeace.menuinf.helpers.TAG, "LoginRequest")
+            Log.d(TAG, "LoginRequest")
         } else {
-            Log.d(com.codeace.menuinf.helpers.TAG, "UpdateUI")
+            Log.d(TAG, "UpdateUI")
             updateUi(mAuth.currentUser!!)
-        }
-    }
-
-    private fun initViewModel() {
-        foodVM = ViewModelProviders.of(this, object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return FoodViewModel(application) as T
-            }
-        }).get(FoodViewModel::class.java)
-        Log.d(com.codeace.menuinf.helpers.TAG, "View Model Initialized")
-
-        foodVM?.getLiveData()!!.observe(this, Observer { foodList ->
-            Log.d(com.codeace.menuinf.helpers.TAG, "New List : ".plus(foodList.toString()))
-            foodAdapter.submitList(foodList)
-            getCategories(foodList.isNotEmpty())
-        })
-    }
-
-    private fun getCategories(isListEmpty: Boolean) {
-        Log.d(com.codeace.menuinf.helpers.TAG, "Disabling Loading Animation")
-        if (isListEmpty) {
-            simpleSwipeRefreshLayout.isRefreshing = false
-            Log.d(com.codeace.menuinf.helpers.TAG, "Loading Animation Disabled")
-        } else {
-            simpleSwipeRefreshLayout.isRefreshing = false
-            Log.d(com.codeace.menuinf.helpers.TAG, "List Empty")
-        }
-        Log.d(com.codeace.menuinf.helpers.TAG, "Checking dataChange")
-        if (foodVM?.getIsDataChanged()!!) {
-            Log.d(com.codeace.menuinf.helpers.TAG, "Data Changed Detected")
-            foodVM?.getCategories()
-            Log.d(
-                com.codeace.menuinf.helpers.TAG,
-                "New Categories : ".plus(foodVM?.categoryListItems.toString())
-            )
-            categoryList.adapter = ArrayAdapter(
-                this@MainActivity,
-                R.layout.nav_header, foodVM?.categoryListItems!!.toList()
-            )
-            rangeSeekBar.max = foodVM?.maxPrice!!.toInt()
-
-            minText.text = rangeSeekBar.getMinThumbValue().toString()
-            maxText.text = rangeSeekBar.getMaxThumbValue().toString()
-            foodVM?.setIsDataChanged(false)
-            Log.d(com.codeace.menuinf.helpers.TAG, "Initialized SeekBar and Categories List")
         }
     }
 
@@ -297,16 +256,63 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
                 foodVM?.deleteAll()
                 true
             }
-            Log.d(com.codeace.menuinf.helpers.TAG, "Buttons Enabled")
+            Log.d(TAG, "Buttons Enabled")
         }
         avatar.isVisible = true
         Glide.with(this).load(currentUser.photoUrl.toString()).centerCrop()
             .placeholder(R.drawable.ic_user).into(avatar)
         mail.text = currentUser.displayName
         position.text = currentUser.email
-        Log.d(com.codeace.menuinf.helpers.TAG, "UserAdded")
+        Log.d(TAG, "UserAdded")
 
-        Log.d(com.codeace.menuinf.helpers.TAG, "View Model Initialize")
+        Log.d(TAG, "View Model Initialize")
         initViewModel()
+    }
+
+    private fun initViewModel() {
+        foodVM = ViewModelProviders.of(this, object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return FoodViewModel(application) as T
+            }
+        }).get(FoodViewModel::class.java)
+        Log.d(TAG, "View Model Initialized")
+
+        foodVM?.getLiveData()!!.observe(this, Observer { foodList ->
+            Log.d(TAG, "New List : ".plus(foodList.toString()))
+            foodAdapter.submitList(foodList)
+            getCategories(foodList.isNotEmpty())
+        })
+    }
+
+    private fun getCategories(isListEmpty: Boolean) {
+        Log.d(TAG, "Disabling Loading Animation")
+
+        simpleSwipeRefreshLayout.isRefreshing = false
+        noItem.visibility = if (isListEmpty) {
+            View.GONE
+            Log.d(TAG, "Loading Animation Disabled")
+        } else {
+            View.VISIBLE
+            Log.d(TAG, "List Empty")
+        }
+
+        Log.d(TAG, "Checking dataChange")
+        if (foodVM?.getIsDataChanged()!!) {
+            Log.d(TAG, "Data Changed Detected")
+            Log.d(TAG, "New Categories : ".plus(foodVM?.getCategoryList().toString()))
+
+            categoryList.adapter = ArrayAdapter(
+                this@MainActivity,
+                R.layout.nav_header, foodVM?.getCategoryList()!!.toList()
+            )
+
+            rangeSeekBar.max = foodVM?.getMaxPrice()!!
+
+            minText.text = rangeSeekBar.getMinThumbValue().toString()
+            maxText.text = rangeSeekBar.getMaxThumbValue().toString()
+            foodVM?.setIsDataChanged(false)
+
+            Log.d(TAG, "Initialized SeekBar and Categories List")
+        }
     }
 }
