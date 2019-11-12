@@ -10,7 +10,6 @@ import com.codeace.menuinf.helpers.TAG
 import com.codeace.menuinf.helpers.showMessage
 import com.codeace.menuinf.workers.DatabaseAsyncTask
 import com.codeace.menuinf.workers.SearchAsyncTask
-import com.codeace.menuinf.workers.SyncDatabaseAT
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.*
@@ -34,6 +33,7 @@ class FoodRepository(application: Application) {
                 Log.d(TAG, "Inserting Data")
                 val fbList: MutableList<FoodData> = mutableListOf()
                 dataSnapshot.children.mapNotNullTo(fbList) { it.getValue<FoodData>(FoodData::class.java) }
+                /*
                 SyncDatabaseAT({
                     Log.d(TAG, "DataBase Inserted")
                     insertDb(it)
@@ -43,7 +43,13 @@ class FoodRepository(application: Application) {
                 }, {
                     Log.d(TAG, "DataBase Deleted")
                     deleteDb(it)
-                }).execute(allFoodData.value, fbList.toList())
+                }).execute(allFoodData.value, fbList.toList())\
+                */
+                DatabaseAsyncTask(foodDataDao,4).execute()
+                fbList.forEach {
+                    insertDb(it)
+                }
+
                 Log.d(TAG, "Data Inserted")
             }
 
@@ -58,7 +64,6 @@ class FoodRepository(application: Application) {
 
         Log.d(TAG, "New Data Source Added")
         allFoodData.addSource(foodDataDao.getAllFoodData("food_name")) { list ->
-            allFoodData.value = list
             isDataChanged = true
             Log.d(TAG, "Menu : $list")
             Log.d(TAG, "Refreshing Categories")
@@ -67,6 +72,7 @@ class FoodRepository(application: Application) {
                 categoryListItems.add(it.food_category)
                 maxPrice = maxOf(maxPrice, it.food_price)
             }
+            allFoodData.value = list
         }
     }
 

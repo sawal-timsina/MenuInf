@@ -3,6 +3,7 @@ package com.codeace.menuinf.ui.activity
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.AsyncTask
 import android.os.Bundle
 import android.view.View
 import android.view.animation.Animation
@@ -220,22 +221,22 @@ class LoginActivity : AppCompatActivity() {
                     user.child("isAdmin").setValue(false)
                     // Sign in success, update UI with the signed-in user's information
                     if (userAvatarStorage != null) {
-
-                        userAvatarStorage.putFile(imageUri!!)
-                            .continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
-                                if (!task.isSuccessful) {
-                                    throw task.exception!!
+                        AsyncTask.execute {
+                            userAvatarStorage.putFile(imageUri!!)
+                                .continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
+                                    if (!task.isSuccessful) {
+                                        throw task.exception!!
+                                    }
+                                    return@Continuation userAvatarStorage.downloadUrl
+                                })
+                                .addOnCompleteListener { taskSnapshot ->
+                                    // Get a URL to the uploaded content
+                                    imageUri = taskSnapshot.result
+                                    signUpUser(name)
+                                }.addOnFailureListener {
+                                    showMessage(this, it.localizedMessage.toString())
                                 }
-                                return@Continuation userAvatarStorage.downloadUrl
-                            })
-                            .addOnCompleteListener { taskSnapshot ->
-                                // Get a URL to the uploaded content
-                                imageUri = taskSnapshot.result
-                                signUpUser(name)
-                            }.addOnFailureListener {
-                                showMessage(this, it.localizedMessage.toString())
-                            }
-
+                        }
                     } else {
                         signUpUser(name)
                     }
