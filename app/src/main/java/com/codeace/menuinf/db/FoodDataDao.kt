@@ -22,7 +22,7 @@ interface FoodDataDao {
     @Query("DELETE FROM food_items")
     fun deleteAll()
 
-    @Query("SELECT * FROM food_items WHERE food_name == :word ")
+    @Query("SELECT * FROM food_items WHERE INSTR(LOWER(food_name),LOWER(:word)) != 0 ")
     fun searchFoodData(word: String): List<FoodData>
 
     @Query("SELECT * FROM food_items WHERE food_price BETWEEN :min AND :max AND food_category IN (:categories)")

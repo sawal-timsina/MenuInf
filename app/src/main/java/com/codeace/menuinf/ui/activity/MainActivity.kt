@@ -1,6 +1,7 @@
 package com.codeace.menuinf.ui.activity
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.transition.Explode
 import android.util.Log
@@ -19,10 +20,7 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.codeace.menuinf.R
@@ -33,6 +31,7 @@ import com.codeace.menuinf.ui.fragments.FoodDialog
 import com.codeace.menuinf.viewModel.FoodViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.innovattic.rangeseekbar.RangeSeekBar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_layout.*
@@ -122,7 +121,6 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
                 }
             })
         }
-
     }
 
     override fun onStart() {
@@ -213,6 +211,22 @@ class MainActivity : AppCompatActivity(), FoodDialog.FoodDialogListener,
         val dialog = FoodDialog()
         dialog.dataToUpdate(foodAdapter.getDataAt(pos))
         dialog.show(supportFragmentManager, foodAdapter.getDataAt(pos).id.toString())
+    }
+
+    override fun onUploadSuccess(uri: Uri) {
+        mAuth.currentUser?.updateProfile(
+            UserProfileChangeRequest.Builder()
+                .setDisplayName(intent.getStringExtra("name") as String)
+                .setPhotoUri(uri)
+                .build()
+        )
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Glide.with(this).load(mAuth.currentUser!!.photoUrl.toString()).centerCrop()
+                        .placeholder(R.drawable.ic_user).into(avatar)
+                    mail.text = mAuth.currentUser!!.displayName
+                }
+            }
     }
 
     private fun searchItems(newText: String) {

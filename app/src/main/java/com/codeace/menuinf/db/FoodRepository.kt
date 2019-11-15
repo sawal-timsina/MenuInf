@@ -104,7 +104,7 @@ class FoodRepository(application: Application) {
     fun searchItems(word: String) {
         removeSource()
         SearchAsyncTask(foodDataDao, 0) {
-
+            setCurrentList(it)
         }.execute(word)
     }
 
@@ -112,11 +112,11 @@ class FoodRepository(application: Application) {
         removeSource()
         if (categories.isNotEmpty()) {
             SearchAsyncTask(foodDataDao, 1, categories) {
-
+                setCurrentList(it)
             }.execute(min.toString(), max.toString())
         } else if (categories.isEmpty()) {
             SearchAsyncTask(foodDataDao, 1, categoryListItems.toList()) {
-
+                setCurrentList(it)
             }.execute(min.toString(), max.toString())
         } else if (min == 0 && max == maxPrice.toInt() && categories.isEmpty()) {
             setDefault()

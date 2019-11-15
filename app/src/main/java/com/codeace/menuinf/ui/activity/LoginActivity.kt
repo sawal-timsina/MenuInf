@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -20,12 +21,12 @@ import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.login_singup.*
+import java.io.Serializable
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var loginAuth: FirebaseAuth
@@ -36,10 +37,8 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-
-
         if (loginAuth.currentUser != null) {
-            startMainActivity()
+            startMainActivity("")
         }
     }
 
@@ -197,7 +196,7 @@ class LoginActivity : AppCompatActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     progressBar.visibility = View.GONE
                     showMessage(this, "Welcome : ${loginAuth.currentUser?.displayName}")
-                    startMainActivity()
+                    startMainActivity("")
                 } else {
                     progressBar.visibility = View.GONE
                     showMessage(this, it.exception?.localizedMessage.toString())
@@ -232,11 +231,14 @@ class LoginActivity : AppCompatActivity() {
                                 .addOnCompleteListener { taskSnapshot ->
                                     // Get a URL to the uploaded content
                                     imageUri = taskSnapshot.result
-                                    signUpUser(name)
+                                    (MainActivity::onUploadSuccess)(MainActivity(),imageUri!!)
+                                    Log.d("Testcase", imageUri.toString())
                                 }.addOnFailureListener {
                                     showMessage(this, it.localizedMessage.toString())
                                 }
                         }
+                        signUpUser(name)
+                        Log.d("Testcase", "242")
                     } else {
                         signUpUser(name)
                     }
@@ -250,23 +252,17 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun signUpUser(name: String) {
-        loginAuth.currentUser?.updateProfile(
-            UserProfileChangeRequest.Builder()
-                .setDisplayName(name)
-                .setPhotoUri(imageUri)
-                .build()
-        )
-            ?.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    progressBar.visibility = View.GONE
-                    showMessage(this, "Welcome : ".plus(loginAuth.currentUser?.displayName))
-                    startMainActivity()
-                }
-            }
+        progressBar.visibility = View.GONE
+        showMessage(this, "Welcome : ".plus(loginAuth.currentUser?.displayName))
+        startMainActivity(name)
     }
 
-    private fun startMainActivity() {
-        startActivity(Intent(this, MainActivity::class.java))
+    private fun startMainActivity(name: String) {
+        val intent = Intent(this, MainActivity::class.java)
+        if (name.isNotEmpty()) {
+            intent.putExtra("name", name as Serializable)
+        }
+        startActivity(intent)
         finish()
     }
 }

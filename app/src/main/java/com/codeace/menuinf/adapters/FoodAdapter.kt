@@ -1,5 +1,6 @@
 package com.codeace.menuinf.adapters
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ class FoodAdapter : ListAdapter<FoodData, FoodAdapter.ViewHolder>(DIFF_CALLBACK)
         fun onFoodItemClicked(pos: Int, pair: Pair<View, String>)
         fun onItemDelete(pos: Int)
         fun onItemUpdate(pos: Int)
+        fun onUploadSuccess(uri: Uri)
     }
 
     var setItemListeners: ItemListeners? = null
