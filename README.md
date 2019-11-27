@@ -1,2 +1,4 @@
 # MenuInf
-Simple food menu app that displays menu items.
+App that displays menu items.
+
+# Written in Kotlin
